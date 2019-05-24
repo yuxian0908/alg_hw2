@@ -6,6 +6,6 @@ using namespace std;
 
 int main(){
     Epolygon *t = new Epolygon;
-    cout<<t->test<<endl;
+    cout<<"hello world"<<endl;
     return 0;
 }
