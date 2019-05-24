@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Spolygon::Spolygon()
+Spolygon::Spolygon(Node *n)
 {
 
 }
