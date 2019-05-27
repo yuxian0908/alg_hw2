@@ -7,8 +7,8 @@
 ## structure
 1. DS:
 ```
-1. 實心：逆時針 linked list
-2. 空心：順時針 linked list
+1. 實心：順時針 linked list
+2. 空心：逆時針 linked list
 ```
 
 2. merge:

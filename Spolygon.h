@@ -13,6 +13,12 @@ class Spolygon
         ~Spolygon();
         void merge(Spolygon *s);
         void clip(Epolygon *e);
+        bool containsNode(Node *n);
+        Node* findJunct(Node *n);
+        Node *firstNode;
+
+        // test
+        void test();
 };
 
 #endif
