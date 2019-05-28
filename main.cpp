@@ -13,34 +13,39 @@ int main(){
     n3 = new Node(100, 100, 0);
     n4 = new Node(0, 100, 0);
 
-    n1->next = n2;
-    n2->next = n3;
-    n3->next = n4;
-    n4->next = n1;
+    n1->replaceNext(n2);
+    n2->replaceNext(n3);
+    n3->replaceNext(n4);
+    n4->replaceNext(n1);
 
     Spolygon *s1 = new Spolygon(n1);
-    s1->test();
+    s1->firstNode->printNodes();
 
 
     cout<<endl<<"sencond"<<endl;
 
     // second polygon
-    n1 = new Node(50,50,0);
-    n2 = new Node(150, 50, 0);
-    n3 = new Node(150, 150, 0);
-    n4 = new Node(50, 150, 0);
+    n1 = new Node(50,50,0,0);
+    n2 = new Node(150, 50, 0,0);
+    n3 = new Node(150, 150, 0,0);
+    n4 = new Node(50, 150, 0,0);
 
-    n1->next = n2;
-    n2->next = n3;
-    n3->next = n4;
-    n4->next = n1;
+    n1->replaceNext(n2);
+    n2->replaceNext(n3);
+    n3->replaceNext(n4);
+    n4->replaceNext(n1);
 
     Spolygon *s2 = new Spolygon(n1);
-    s2->test();
+    s2->firstNode->printNodes();
 
 
-    // s1->merge(s2);
     s1->merge(s2);
+    cout<<endl<<"merge"<<endl;
+
+    s1->firstNode->printNodes();
+
+    // Node *t = s2->findJunct(s1->firstNode->next->next);
+    // cout<<t->x<<" "<<t->y;
 
     cout<<endl<<"hello world"<<endl;
     return 0;

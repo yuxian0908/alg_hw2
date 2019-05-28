@@ -2,6 +2,7 @@
 #define S_H
 #include "Epolygon.h"
 #include "Node.h"
+#include <unordered_map> 
 
 class Epolygon;
 
@@ -13,12 +14,13 @@ class Spolygon
         ~Spolygon();
         void merge(Spolygon *s);
         void clip(Epolygon *e);
-        bool containsNode(Node *n);
-        Node* findJunct(Node *n);
+
+        Node* copyNodes();
+        void replaceNextNode(Node *n1, Node *n2);
+
+        unordered_map<int, unordered_map<int, Node*> > nodePool;
         Node *firstNode;
 
-        // test
-        void test();
 };
 
 #endif
