@@ -22,15 +22,9 @@ struct Node{
     }
     void printNodes(){
         Node *n = this;
-
-        if(n->pre!=0) n = n->pre;
-        while(n->pre!=0 & n!=this){
-            n = n->pre;
-        }
-
         cout<<endl<<n->x<<" "<<n->y<<endl;
         n = n->next;
-        while(n!=0 & n!=this){
+        while(n!=0 && n!=this){
             cout<<n->x<<" "<<n->y<<endl;
             n = n->next;
         }
