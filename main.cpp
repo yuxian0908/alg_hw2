@@ -8,10 +8,10 @@ int main(){
 
     // first polygon
     Node *n1, *n2, *n3, *n4;
-    n1 = new Node(100, 100);
-    n2 = new Node(0, 100);
-    n3 = new Node(0,0);
-    n4 = new Node(100, 0);
+    n1 = new Node(50, 0);
+    n2 = new Node(100, 0);
+    n3 = new Node(100, 200);
+    n4 = new Node(50, 200);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
@@ -25,10 +25,10 @@ int main(){
     cout<<endl<<"sencond"<<endl;
 
     // second polygon
-    n1 = new Node(150, 50);
-    n2 = new Node(150, 150);
-    n3 = new Node(50, 150);
-    n4 = new Node(50,50);
+    n1 = new Node(0, 50);
+    n2 = new Node(200, 50);
+    n3 = new Node(200, 100);
+    n4 = new Node(0,50);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
