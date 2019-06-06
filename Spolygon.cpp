@@ -21,18 +21,11 @@ void Spolygon::merge(Spolygon *s2){
     Node* tmp;
 
 // save nodes into nodePool
-    Node *saveN = s1->firstNode;
-    nodePool[saveN->x][saveN->y] = saveN;
-    saveN = saveN->next;
-    while(saveN!=s1->firstNode){
-        nodePool[saveN->x][saveN->y] = saveN;
-        saveN = saveN->next;
-    }
-    saveN = s2->firstNode;
-    nodePool[saveN->x][saveN->y] = saveN;
+    Node *saveN = s2->firstNode;
+    nodePool.add(saveN);
     saveN = saveN->next;
     while(saveN!=s2->firstNode){
-        nodePool[saveN->x][saveN->y] = saveN;
+        nodePool.add(saveN);
         saveN = saveN->next;
     }
 
@@ -47,20 +40,16 @@ void Spolygon::merge(Spolygon *s2){
     Node *junctEnd = junct[1];
 
     if(containsNode(s2->firstNode,s1CurN)){ // if current node is in s2
-        nodePool[s1CurN->x][s1CurN->y]=0;
-        if(junctEnd) junctEnd->replaceNext(s1nextN);
+        nodePool.remove(s1CurN->x, s1CurN->y);
     }else if(containsNode(s2->firstNode,s1nextN)){ // if next node is in s2
-        nodePool[s1nextN->x][s1nextN->y]=0;
-        if(junctBegin) s1CurN->replaceNext(junctBegin);
-    }else{
-        if(junctEnd) junctEnd->replaceNext(s1nextN);
-        if(junctBegin) s1CurN->replaceNext(junctBegin);
+        nodePool.remove(s1nextN->x, s1nextN->y);
     }
     // set junction in nodePool
     while(junctBegin!=junctEnd){
-        nodePool[junctBegin->x][junctBegin->y] = junctBegin;
+        nodePool.add(junctBegin);
         if(junctBegin->next) junctBegin = junctBegin->next;
     }
+    if(junctBegin) nodePool.add(junctBegin);
     s1CurN = s1nextN;
     s1nextN = s1nextN->next;
 
@@ -71,88 +60,71 @@ void Spolygon::merge(Spolygon *s2){
         junctEnd = junct[1];
 
         if(containsNode(s2->firstNode,s1CurN)){ // if current node is in s2
-            nodePool[s1CurN->x][s1CurN->y]=0;
-            if(junctEnd) junctEnd->replaceNext(s1nextN);
+            nodePool.remove(s1CurN->x, s1CurN->y);
         }else if(containsNode(s2->firstNode,s1nextN)){ // if next node is in s2
-            nodePool[s1nextN->x][s1nextN->y]=0;
-            if(junctBegin) s1CurN->replaceNext(junctBegin);
-        }else{
-            if(junctEnd) junctEnd->replaceNext(s1nextN);
-            if(junctBegin) s1CurN->replaceNext(junctBegin);
+            nodePool.remove(s1nextN->x, s1nextN->y);
         }
         // set junction in nodePool
         while(junctBegin!=junctEnd){
-            nodePool[junctBegin->x][junctBegin->y] = junctBegin;
+            nodePool.add(junctBegin);
             if(junctBegin->next) junctBegin = junctBegin->next;
         }
-        if(junctBegin) nodePool[junctBegin->x][junctBegin->y] = junctBegin;
-        
+        if(junctBegin) nodePool.add(junctBegin);
         s1CurN = s1nextN;
         s1nextN = s1nextN->next;
     }
 
-    cout<<nodePool[0][50]->next->x<<" "<<nodePool[0][50]->next->y<<endl;
-    cout<<"========"<<endl;
 
-// go through s2 and concate all the nodes
-    Node *s2CurN = copiedS2;
+// go through s2 to remove some node
+    Node *s2CurN = s2->firstNode;
     Node *s2nextN = s2CurN->next;
 
     // check the first node
-    junct = findJunct(copiedS1, s2CurN);
-    junctBegin = junct[0] ? nodePool[junct[0]->x][junct[0]->y] : 0;
-    junctEnd = junct[1] ? nodePool[junct[1]->x][junct[1]->y] : 0;
-    Node *conc;
-
-    if(containsNode(copiedS1,s2CurN)){ // if current node is in s1
-        nodePool[s2CurN->x][s2CurN->y]=0;
-        conc = nodePool[s2nextN->x][s2nextN->y];
-        if(junctEnd) junctEnd->replaceNext(conc);
-    }else if(containsNode(copiedS1,s2nextN)){ // if next node is in s1
-        nodePool[s2nextN->x][s2nextN->y]=0;
-        conc = nodePool[s2CurN->x][s2CurN->y];
-        if(junctBegin) conc->replaceNext(junctBegin);
-    }else{
-        if(junctEnd){
-            conc = nodePool[s2nextN->x][s2nextN->y];
-            junctEnd->replaceNext(conc);
-        }
-        if(junctBegin){
-            conc = nodePool[s2CurN->x][s2CurN->y];
-            conc->replaceNext(junctBegin);
-        }
+    if(containsNode(s1->firstNode,s2CurN)){ // if current node is in s1
+        nodePool.remove(s2CurN->x, s2CurN->y);
+    }else if(containsNode(s1->firstNode,s2nextN)){ // if next node is in s1
+        nodePool.remove(s2nextN->x, s2nextN->y);
     }
     s2CurN = s2nextN;
     s2nextN = s2nextN->next;
 
     // check the other node
-    // while(s2nextN!=0 & s2CurN != s2->firstNode){
-    //     junct = findJunct(copiedS1, s2CurN);
-    //     junctBegin = junct[0] ? nodePool[junct[0]->x][junct[0]->y] : 0;
-    //     junctEnd = junct[1] ? nodePool[junct[1]->x][junct[1]->y] : 0;
+    while(s2nextN!=0 & s2CurN != s2->firstNode){
+        if(containsNode(copiedS1,s2CurN)){ // if current node is in s1
+            nodePool.remove(s2CurN->x, s2CurN->y);
+        }else if(containsNode(copiedS1,s2nextN)){ // if next node is in s1
+            nodePool.remove(s2nextN->x, s2nextN->y);
+        }
+        s2CurN = s2nextN;
+        s2nextN = s2nextN->next;
+    }
 
-    //     if(containsNode(copiedS1,s2CurN)){ // if current node is in s1
-    //         nodePool[s2CurN->x][s2CurN->y]=0;
-    //         conc = nodePool[s2nextN->x][s2nextN->y];
-    //         if(junctEnd) junctEnd->replaceNext(conc);
-    //     }else if(containsNode(copiedS1,s2nextN)){ // if next node is in s1
-    //         nodePool[s2nextN->x][s2nextN->y]=0;
-    //         conc = nodePool[s2CurN->x][s2CurN->y];
-    //         if(junctBegin) conc->replaceNext(junctBegin);
-    //     }else{
-    //         if(junctEnd){
-    //             conc = nodePool[s2nextN->x][s2nextN->y];
-    //             junctEnd->replaceNext(conc);
-    //         }
-    //         if(junctBegin){
-    //             conc = nodePool[s2CurN->x][s2CurN->y];
-    //             conc->replaceNext(junctBegin);
-    //         }
-    //     }
-        
-    //     s2CurN = s2nextN;
-    //     s2nextN = s2nextN->next;
-    // }
+    nodePool.printPool();
+
+
+// concate all remaining nodes
+    Node *cur = firstNode;
+    Node *next = nodePool.yListNext(cur); //find left
+    next = next==0 ? nodePool.xListNext(cur) :next; //find up
+    next = next==0 ? nodePool.yListPre(cur) :next; //find right
+    next = next==0 ? nodePool.xListPre(cur) :next; //find down
+
+    cur->replaceNext(next);
+    nodePool.remove(cur);
+
+    while(next!=0){
+        cur = next;
+        next = nodePool.yListNext(cur); //find left
+        next = next==0 ? nodePool.xListNext(cur) :next; //find up
+        next = next==0 ? nodePool.yListPre(cur) :next; //find right
+        next = next==0 ? nodePool.xListPre(cur) :next; //find down
+
+        cur->replaceNext(next);
+        nodePool.remove(cur);
+    }
+    cur->replaceNext(firstNode);
+
+    nodePool.printPool();
 
 
 }
@@ -162,13 +134,14 @@ void Spolygon::merge(Spolygon *s2){
 // solid polygon contructor
 Spolygon::Spolygon(Node *n){
     this->firstNode = n;
-    nodePool[n->x][n->y] = n;
+    nodePool.add(n);
     n = n->next;
     while(n!=this->firstNode){
-        nodePool[n->x][n->y] = n;
+        nodePool.add(n);
         n = n->next;
     }
     resetFirstNode();
+    nodePool.printPool();
 }
 
 void Spolygon::resetFirstNode(){
@@ -220,8 +193,8 @@ Node* Spolygon::copyNodes(){
 
 void Spolygon::replaceNextNode(Node *n1, Node *n2){
     Node* delN = n1->next;
-    if(delN!=0) nodePool[delN->x][delN->y] = 0;
-    nodePool[n2->x][n2->y] = n2;
+    if(delN!=0) nodePool.remove(delN->x, delN->y);
+    nodePool.add(n2);
     n1->replaceNext(n2);
 }
 
@@ -268,10 +241,6 @@ Node** findJunct(Node *n1, Node *n2){
     Node *curN = n1;
     Node *res = new Node(0,0);
     Node *tmp = junct(curN, n2);
-    // check common edge
-    Node *conN = n2;
-    Node *nonN = onEdge(curN, n2)&onEdge(n2, curN->next) ? curN->next : 0;
-    bool con = con || (onEdge(curN, n2)^onEdge(curN,n2->next));
     if(tmp){
         res->replaceNext(tmp);
         res = res->next;
@@ -279,8 +248,6 @@ Node** findJunct(Node *n1, Node *n2){
 
     curN = curN -> next;
     while(curN!=n1){
-        con = con || (onEdge(curN, n2)^onEdge(curN,n2->next));
-        nonN = nonN==0 ? (onEdge(curN, n2)&onEdge(n2, curN->next) ? curN->next : 0) : nonN;
         tmp = junct(curN, n2);
         if(tmp){
             res->replaceNext(tmp);
@@ -308,16 +275,6 @@ Node** findJunct(Node *n1, Node *n2){
     Node* end = res;
     while(end && end->next){
         end = end->next;
-    }
-    
-    if(res==0 && con){
-        res = conN;
-        end = res;
-        if(nonN){
-            cout<<res<<" "<<con<<" "<<nonN->x<<" "<<nonN->y<<endl;
-            res->next = nonN;
-            end = nonN;
-        }
     }
 
     Node* *r = new Node*[2];

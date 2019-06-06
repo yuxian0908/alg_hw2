@@ -18,7 +18,7 @@ struct Node{
     }
     void replaceNext(Node* n){
         this->next = n;
-        n->pre = this;
+        if(n) n->pre = this;
     }
     void printNodes(){
         Node *n = this;
