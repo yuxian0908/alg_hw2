@@ -8,10 +8,10 @@ int main(){
 
     // first polygon
     Node *n1, *n2, *n3, *n4;
-    n1 = new Node(50, 0);
+    n1 = new Node(0, 0);
     n2 = new Node(100, 0);
-    n3 = new Node(100, 200);
-    n4 = new Node(50, 200);
+    n3 = new Node(100, 100);
+    n4 = new Node(0, 100);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
@@ -27,8 +27,8 @@ int main(){
     // second polygon
     n1 = new Node(0, 50);
     n2 = new Node(200, 50);
-    n3 = new Node(200, 100);
-    n4 = new Node(0,50);
+    n3 = new Node(200, 150);
+    n4 = new Node(0, 150);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
@@ -39,10 +39,13 @@ int main(){
     s2->firstNode->printNodes();
 
 
-    s1->merge(s2);
     cout<<endl<<"merge"<<endl;
+    s1->merge(s2);
 
     s1->firstNode->printNodes();
+
+
+
 
     // Node *t = s2->findJunct(s1->firstNode->next->next);
     // cout<<t->x<<" "<<t->y;
