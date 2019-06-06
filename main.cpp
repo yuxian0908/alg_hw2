@@ -70,26 +70,26 @@ int main(){
     
     
     
-    // fourth polygon
-    cout<<endl<<"fourth"<<endl;
-    n1 = new Node(100, -50);
-    n2 = new Node(200, -50);
-    n3 = new Node(200, 0);
-    n4 = new Node(100, 0);
+    // // fourth polygon
+    // cout<<endl<<"fourth"<<endl;
+    // n1 = new Node(100, -50);
+    // n2 = new Node(200, -50);
+    // n3 = new Node(200, 0);
+    // n4 = new Node(100, 0);
 
-    n1->replaceNext(n2);
-    n2->replaceNext(n3);
-    n3->replaceNext(n4);
-    n4->replaceNext(n1);
+    // n1->replaceNext(n2);
+    // n2->replaceNext(n3);
+    // n3->replaceNext(n4);
+    // n4->replaceNext(n1);
 
-    Spolygon *s4 = new Spolygon(n1);
-    s4->firstNode->printNodes();
+    // Spolygon *s4 = new Spolygon(n1);
+    // s4->firstNode->printNodes();
 
-    // merge s1 s3
-    cout<<endl<<"merge"<<endl;
-    s1->merge(s4);
+    // // merge s1 s4
+    // cout<<endl<<"merge"<<endl;
+    // s1->merge(s4);
 
-    s1->firstNode->printNodes();
+    // s1->firstNode->printNodes();
 
 
 

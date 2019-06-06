@@ -19,8 +19,6 @@ Node* reverseNode(Node *n);
 // merge two solid polygon
 void Spolygon::merge(Spolygon *s2){
     Spolygon *s1 = this;
-    Node* copiedS1 = copyNodes();
-    Node* copiedS2 = s2->copyNodes();
     Node* tmp;
 
 // save nodes into nodePool
@@ -37,6 +35,29 @@ void Spolygon::merge(Spolygon *s2){
     while(saveN!=s1->firstNode){
         nodePool.add(saveN);
         saveN = saveN->next;
+    }
+
+// save edges into edgePool
+    Node *saveN1 = s1->firstNode;
+    Node *saveN2 = saveN1->next;
+    nodePool.addEdge(saveN1, saveN2);
+    saveN1 = saveN2;
+    saveN2 = saveN2->next;
+    while(saveN1!=s1->firstNode){
+        nodePool.addEdge(saveN1, saveN2);
+        saveN1 = saveN2;
+        saveN2 = saveN2->next;
+    }
+
+    saveN1 = s2->firstNode;
+    saveN2 = saveN1->next;
+    nodePool.addEdge(saveN1, saveN2);
+    saveN1 = saveN2;
+    saveN2 = saveN2->next;
+    while(saveN1!=s2->firstNode){
+        nodePool.addEdge(saveN1, saveN2);
+        saveN1 = saveN2;
+        saveN2 = saveN2->next;
     }
 
 // go through s1 to find and gather the junction nodes with s2
@@ -64,11 +85,16 @@ void Spolygon::merge(Spolygon *s2){
     }
 
     // set junction in nodePool
+    nodePool.add(junctBegin);
+    nodePool.addEdge(s1CurN, junctBegin);
     while(junctBegin!=junctEnd){
         nodePool.add(junctBegin);
         if(junctBegin->next) junctBegin = junctBegin->next;
     }
-    if(junctBegin) nodePool.add(junctBegin);
+    if(junctBegin){
+        nodePool.add(junctBegin);
+        nodePool.addEdge(junctBegin, s1nextN);
+    }
     s1CurN = s1nextN;
     s1nextN = s1nextN->next;
 
@@ -93,11 +119,16 @@ void Spolygon::merge(Spolygon *s2){
         }
     
         // set junction in nodePool
+        nodePool.add(junctBegin);
+        nodePool.addEdge(s1CurN, junctBegin);
         while(junctBegin!=junctEnd){
             nodePool.add(junctBegin);
             if(junctBegin->next) junctBegin = junctBegin->next;
         }
-        if(junctBegin) nodePool.add(junctBegin);
+        if(junctBegin){
+            nodePool.add(junctBegin);
+            nodePool.addEdge(junctBegin, s1nextN);
+        }
         s1CurN = s1nextN;
         s1nextN = s1nextN->next;
     }
@@ -143,10 +174,11 @@ void Spolygon::merge(Spolygon *s2){
         s2nextN = s2nextN->next;
     }
 
+
+    nodePool.printEdgePool();
     nodePool.printPool();
 
-
-// concate all remaining nodes
+// concate all nodes to form a solid polygon
     Node *cur = firstNode;
     Node *next = nodePool.yListNext(cur); //find left
     next = next==0 ? nodePool.xListNext(cur) :next; //find up
@@ -155,17 +187,20 @@ void Spolygon::merge(Spolygon *s2){
 
     cur->replaceNext(next);
     nodePool.remove(cur);
-        cout<<"cur: "<<cur->x<<" "<<cur->y<<endl;
-        cout<<"next: "<<next->x<<" "<<next->y<<endl;
-        nodePool.printPool();
 
     int lastDir = 0;
     while(next!=0){
         cur = next;
         next = 0;
         int nextDir = lastDir-1;
+
+        // for(int i=0; i<4; i++){
+        //     Node *tmp = nodePool.findNext(cur, nextDir+i);
+        //     if(nodePool.edgeOutPool[cur][tmp]) next = tmp;
+        // }
+
         for(int i=0; i<4; i++){
-            if(nextDir+i!=lastDir) next = nodePool.findNext(cur, nextDir+i);
+            if(next==0 && nextDir+i!=lastDir) next = nodePool.findNext(cur, nextDir+i);
             if(next!=0){
                 lastDir = (nextDir+i)%4;
                 break;
@@ -174,15 +209,15 @@ void Spolygon::merge(Spolygon *s2){
 
         cur->replaceNext(next);
         nodePool.remove(cur);
-        cout<<"cur: "<<cur->x<<" "<<cur->y<<endl;
-        if(next) cout<<"next: "<<next->x<<" "<<next->y<<endl;
-        nodePool.printPool();
     }
     cur->replaceNext(firstNode);
-
+    resetFirstNode();
+    // nodePool.resetNodePool();
+    nodePool.printEdgePool();
     nodePool.printPool();
 
-    resetFirstNode();
+// concate remaining nodes to form empty polygons
+
 }
 
 /*    done     */
@@ -197,7 +232,6 @@ void Spolygon::merge(Spolygon *s2){
             n = n->next;
         }
         resetFirstNode();
-        nodePool.printPool();
     }
 
     void Spolygon::resetFirstNode(){
