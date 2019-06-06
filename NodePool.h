@@ -83,6 +83,7 @@ struct NodePool{
         if(x_lists[x]==0 && y_lists[x]==0){
             return;
         }
+        if(find(x,y)==0) return;
         // remove from x_lists
         ListNode* curN = x_lists[x];
         while(curN!=0 && curN->next){
@@ -96,6 +97,7 @@ struct NodePool{
             if(curN->pre && curN!=x_lists[x]) curN->pre->replaceNext(curN->next);
             else x_lists[x] = curN->next;
         }
+        if(x_lists[x]==0) x_lists.erase(x);
 
         // remove from y_lists
         curN = y_lists[y];
@@ -111,6 +113,9 @@ struct NodePool{
             if(curN->pre && curN!=y_lists[y]) curN->pre->replaceNext(curN->next);
             else y_lists[y] = curN->next;
         }
+
+        if(y_lists[y]==0) y_lists.erase(y);
+
         return;
     }
 
@@ -126,7 +131,22 @@ struct NodePool{
         return 0;
     }
 
-    // find x_list successor
+    // find y_list successor (right, dir=0)
+    Node* yListNext(Node* n){
+        int x = n->x;
+        int y = n->y;
+        if(y_lists[y]==0){
+            return 0;
+        }
+        ListNode* curN = y_lists[y];
+        while(curN!=0 && curN->next!=0){
+            if(curN->val->x == x) return curN->next->val;
+            curN = curN->next;
+        }
+        return 0;
+    }
+
+    // find x_list successor (up, dir=1)
     Node* xListNext(Node* n){
         int x = n->x;
         int y = n->y;
@@ -141,38 +161,7 @@ struct NodePool{
         return 0;
     }
 
-    // find x_list predecessor
-    Node* xListPre(Node* n){
-        int x = n->x;
-        int y = n->y;
-        if(x_lists[x]==0){
-            return 0;
-        }
-        ListNode* curN = x_lists[x];
-        while(curN!=0 && curN->next!=0){
-            if(curN->val->y == y) return curN->pre->val;
-            curN = curN->next;
-        }
-        if(curN->val->x == x && curN!=x_lists[x]) return curN->pre->val;
-        return 0;
-    }
-
-    // find y_list successor
-    Node* yListNext(Node* n){
-        int x = n->x;
-        int y = n->y;
-        if(y_lists[y]==0){
-            return 0;
-        }
-        ListNode* curN = y_lists[y];
-        while(curN!=0 && curN->next!=0){
-            if(curN->val->x == x) return curN->next->val;
-            curN = curN->next;
-        }
-        return 0;
-    }
-    
-    // find y_list successor
+    // find y_list successor (left, dir=2)
     Node* yListPre(Node* n){
         int x = n->x;
         int y = n->y;
@@ -181,10 +170,47 @@ struct NodePool{
         }
         ListNode* curN = y_lists[y];
         while(curN!=0 && curN->next!=0){
-            if(curN->val->x == x) return curN->pre->val;
+            if(curN->val->x == x){
+                if(curN!=y_lists[y]) return curN->pre->val;
+                else return 0;
+            }
             curN = curN->next;
         }
         if(curN->val->x == x && curN!=y_lists[y]) return curN->pre->val;
+        return 0;
+    }
+
+    // find x_list predecessor (down, dir=3)
+    Node* xListPre(Node* n){
+        int x = n->x;
+        int y = n->y;
+        if(x_lists[x]==0){
+            return 0;
+        }
+        ListNode* curN = x_lists[x];
+        while(curN!=0 && curN->next!=0){
+            if(curN->val->y == y){
+                if(curN!=x_lists[x]) return curN->pre->val;
+                else return 0;
+            }
+            curN = curN->next;
+        }
+        if(curN->val->x == x && curN!=x_lists[x]) return curN->pre->val;
+        return 0;
+    }
+
+    Node* findNext(Node *n, int dir){
+        dir = (dir+4)%4;
+        cout<<dir<<endl;
+        if(dir==0){
+            return yListNext(n);
+        }else if(dir==1){
+            return xListNext(n);
+        }else if(dir==2){
+            return yListPre(n);
+        }else if(dir==3){
+            return xListPre(n);
+        }
         return 0;
     }
 
