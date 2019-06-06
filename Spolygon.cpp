@@ -11,6 +11,8 @@ Node* junct(Node *n1, Node *n2);
 Node** findJunct(Node *n1, Node *n2);
 bool onPoly(Node *n1, Node *n2);
 bool onEdge(Node *n1, Node *n2);
+bool comPoly(Node *n1, Node *n2);
+bool isCommon(Node *n1, Node *n2);
 bool containsNode(Node *n1, Node *n2);
 Node* reverseNode(Node *n);
 
@@ -51,12 +53,13 @@ void Spolygon::merge(Spolygon *s2){
     bool curOn = onPoly(s2->firstNode, s1CurN);
     bool nexIn = containsNode(s2->firstNode,s1nextN);
     bool nexOn = onPoly(s2->firstNode, s1nextN);
+    bool comm = comPoly(s2->firstNode, s1CurN);
     if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
         nodePool.remove(s1CurN->x, s1CurN->y);
         nodePool.remove(s1nextN->x, s1nextN->y);
     }else if( curIn && !(nexIn||nexOn) ){
         nodePool.remove(s1CurN->x, s1CurN->y);
-    }else if( !(curIn||curOn) && nexIn ){
+    }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
         nodePool.remove(s1nextN->x, s1nextN->y);
     }
 
@@ -79,12 +82,13 @@ void Spolygon::merge(Spolygon *s2){
         curOn = onPoly(s2->firstNode, s1CurN);
         nexIn = containsNode(s2->firstNode,s1nextN);
         nexOn = onPoly(s2->firstNode, s1nextN);
+        comm = comPoly(s2->firstNode, s1CurN);
         if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
             nodePool.remove(s1CurN->x, s1CurN->y);
             nodePool.remove(s1nextN->x, s1nextN->y);
         }else if( curIn && !(nexIn||nexOn) ){
             nodePool.remove(s1CurN->x, s1CurN->y);
-        }else if( !(curIn||curOn) && nexIn ){
+        }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
             nodePool.remove(s1nextN->x, s1nextN->y);
         }
     
@@ -108,12 +112,13 @@ void Spolygon::merge(Spolygon *s2){
     curOn = onPoly(s1->firstNode, s2CurN);
     nexIn = containsNode(s1->firstNode,s2nextN);
     nexOn = onPoly(s1->firstNode, s2nextN);
+    comm = comPoly(s1->firstNode, s2CurN);
     if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
         nodePool.remove(s2CurN->x, s2CurN->y);
         nodePool.remove(s2nextN->x, s2nextN->y);
     }else if( curIn && !(nexIn||nexOn) ){
         nodePool.remove(s2CurN->x, s2CurN->y);
-    }else if( !(curIn||curOn) && nexIn ){
+    }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
         nodePool.remove(s2nextN->x, s2nextN->y);
     }
     s2CurN = s2nextN;
@@ -125,12 +130,13 @@ void Spolygon::merge(Spolygon *s2){
         curOn = onPoly(s1->firstNode, s2CurN);
         nexIn = containsNode(s1->firstNode,s2nextN);
         nexOn = onPoly(s1->firstNode, s2nextN);
+        comm = comPoly(s1->firstNode, s2CurN);
         if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
             nodePool.remove(s2CurN->x, s2CurN->y);
             nodePool.remove(s2nextN->x, s2nextN->y);
         }else if( curIn && !(nexIn||nexOn) ){
             nodePool.remove(s2CurN->x, s2CurN->y);
-        }else if( !(curIn||curOn) && nexIn ){
+        }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
             nodePool.remove(s2nextN->x, s2nextN->y);
         }
         s2CurN = s2nextN;
@@ -388,6 +394,27 @@ void Spolygon::merge(Spolygon *s2){
             ( (n2->x - n1->x)*(n2->x - n1->next->x) <= 0) ) on=true;
         return on;
     }
+
+    // check if edge (n2, n2->next) has common edge on the edges of polygon n1
+    bool comPoly(Node *n1, Node *n2){
+        Node *initN = n1;
+        Node *curN = initN->next;
+        bool comm = false;
+        while(curN != initN){
+            comm = isCommon(curN, n2);
+            curN = curN->next;
+        }
+        return comm;
+    }
+
+    // check if n2(n2, n2->next) is common edge of the edge (n1, n1->next)
+    bool isCommon(Node *n1, Node *n2){
+        bool comm = false;
+        if( n1->x == n1->next->x && n1->next->x == n2->x && n2->next->x == n2->x) comm=true;
+        if( n1->y == n1->next->y && n1->next->y == n2->y && n2->next->y == n2->y) comm=true;
+        return comm;
+    }
+
 
     Node* reverseNode(Node *n){
         Node* res = new Node(0,0);
