@@ -82,6 +82,8 @@ void Spolygon::merge(Spolygon *s2){
         nextS1 = nextS1->next;
     }
 
+    nodePool.printPool();
+    nodePool.printEdgePool();
 
 // go through s2 and store into pool
     Node *firstS2 = copiedS2;
@@ -98,7 +100,7 @@ void Spolygon::merge(Spolygon *s2){
         nodePool.add(curS2);
         if(junctBegin==0 && !containNext){
             nodePool.add(nextS2);
-            nodePool.addEdge(curS2, nextS1);
+            nodePool.addEdge(curS2, nextS2);
         }
         else if(junctBegin!=0){
             nodePool.add(junctBegin);
@@ -148,8 +150,33 @@ void Spolygon::merge(Spolygon *s2){
     nodePool.printEdgePool();
 
 // merge all nodes
-    curS1 = this->firstNode;
+    this->firstNode = nodePool.first();
+    firstS1 = this->firstNode;
+    curS1 = firstS1;
+    nextS1 = nodePool.edgeOutPool[curS1];
+    nodePool.removeOutEdge(curS1);
+    curS1->replaceNext(nextS1);
+    nodePool.remove(curS1);
+    curS1 = nextS1;
+    while(curS1!=firstS1){
+        nextS1 = nodePool.edgeOutPool[curS1];
+        nodePool.removeOutEdge(curS1);
+        curS1->replaceNext(nextS1);
+        nodePool.remove(curS1);
+        curS1 = nextS1;
+    }
 
+
+// handle empty polygon
+    
+
+
+// reset the polygon
+    resetFirstNode();
+    // nodePool.resetEdgePool();
+    // nodePool.resetNodePool();
+    nodePool.printPool();
+    nodePool.printEdgePool();
 }
 
 /*    done     */

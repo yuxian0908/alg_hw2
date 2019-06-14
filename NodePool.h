@@ -17,8 +17,14 @@ struct NodePool{
     unordered_map<int, ListNode*> x_lists; // lists index by x (incrementing)
     unordered_map<int, ListNode*> y_lists; // lists index by y (incrementing)
 
-    unordered_map<Node*, unordered_map<Node*, bool> > edgeInPool;
-    unordered_map<Node*, unordered_map<Node*, bool> > edgeOutPool;
+    unordered_map<Node*, Node* > edgeInPool;
+    unordered_map<Node*, Node* > edgeOutPool;
+
+// NODE POOL
+    Node* first(){
+        int key = x_lists.begin()->first;
+        return x_lists[key]->val;
+    }
 
     void add(Node *n){
         if(n==0) return;
@@ -104,7 +110,6 @@ struct NodePool{
         }
         if(x_lists[x]==0) x_lists.erase(x);
 
-        removeEdges(removed);
 
         // remove from y_lists
         curN = y_lists[y];
@@ -226,37 +231,7 @@ struct NodePool{
         return 0;
     }
 
-    void removeEdges(Node *n){
-        for(unordered_map<Node*, bool>::iterator it=edgeInPool[n].begin();it!=edgeInPool[n].end();it++) {
-            Node* n2 = it->first;
-            edgeInPool[n][n2] = false;
-            edgeOutPool[n2][n] = false;
-            // if(edgeOutPool[n2].find(n) != edgeOutPool[n2].end()) edgeOutPool[n2].erase(n);
-        }
-        for(unordered_map<Node*, bool>::iterator it=edgeOutPool[n].begin();it!=edgeOutPool[n].end();it++) {
-            Node* n2 = it->first;
-            edgeOutPool[n][n2] = false;
-            edgeInPool[n2][n] = false;
-            // if(edgeInPool[n2].find(n) != edgeOutPool[n2].end()) edgeInPool[n2].erase(n);
-        }
-    }
 
-    void addEdge(Node *n1, Node *n2){
-        if(n1==0 || n2==0) return;
-        n1 = find(n1);
-        n2 = find(n2);
-        edgeOutPool[n1][n2] = true;
-        edgeInPool[n2][n1] = true;
-    }
-
-    void resetNodePool(){
-        for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeInPool.begin();it!=edgeInPool.end();it++) {
-            edgeInPool.erase(it->first);
-        }
-        for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeOutPool.begin();it!=edgeOutPool.end();it++) {
-            edgeOutPool.erase(it->first);
-        }
-    }
 
     void printPool(){
         // print x_list
@@ -271,7 +246,7 @@ struct NodePool{
             cout<<endl;
         }
         // print y_list
-        cout<<"y_list"<<endl;
+        cout<<"y_list:"<<endl;
         for(unordered_map<int,ListNode*>::iterator it=y_lists.begin();it!=y_lists.end();it++) {
             ListNode *curN = it->second;
             cout<<it->first<<": ";
@@ -283,30 +258,79 @@ struct NodePool{
         }
         cout<<endl;
     }
+        
+    void resetNodePool(){
+        x_lists.clear();
+        y_lists.clear();
+    }
+
+
+// EDGE POOL
+    void removeEdges(Node *n){
+        // for(unordered_map<Node*, bool>::iterator it=edgeInPool[n].begin();it!=edgeInPool[n].end();it++) {
+        //     Node* n2 = it->first;
+        //     edgeInPool[n][n2] = false;
+        //     edgeOutPool[n2][n] = false;
+        //     // if(edgeOutPool[n2].find(n) != edgeOutPool[n2].end()) edgeOutPool[n2].erase(n);
+        // }
+        // for(unordered_map<Node*, bool>::iterator it=edgeOutPool[n].begin();it!=edgeOutPool[n].end();it++) {
+        //     Node* n2 = it->first;
+        //     edgeOutPool[n][n2] = false;
+        //     edgeInPool[n2][n] = false;
+        //     // if(edgeInPool[n2].find(n) != edgeOutPool[n2].end()) edgeInPool[n2].erase(n);
+        // }
+    }
+
+    void addEdge(Node *n1, Node *n2){
+        if(n1==0 || n2==0) return;
+        n1 = find(n1);
+        n2 = find(n2);
+        edgeOutPool[n1] = n2;
+        edgeInPool[n2] = n1;
+    }
+
+    void resetEdgePool(){
+        edgeInPool.clear();
+        edgeOutPool.clear();
+    }
+
+    void removeOutEdge(Node* n){
+        edgeOutPool.erase(n);
+    }
 
     void printEdgePool(){
         cout<<endl<<"edgeInPool: "<<endl;
-        for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeInPool.begin();it!=edgeInPool.end();it++) {
-            unordered_map<Node*, bool> curPool = it->second;
-            if(it->first){
-                cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": ";
-                for(unordered_map<Node*, bool>::iterator it2=curPool.begin();it2!=curPool.end();it2++) {
-                    if(it2->first && it2->second) cout<<"("<<it2->first->x<<","<<it2->first->y<<")"<<", ";
-                }
-                cout<<endl;
-            }
+
+        for(unordered_map<Node*, Node* >::iterator it=edgeInPool.begin();it!=edgeInPool.end();it++) {
+            cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": "<<"("<<it->second->x<<","<<it->second->y<<")"<<endl;
+            
         }
         cout<<endl<<"edgeOutPool: "<<endl;
-        for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeOutPool.begin();it!=edgeOutPool.end();it++) {
-            unordered_map<Node*, bool> curPool = it->second;
-            if(it->first){
-                cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": ";
-                for(unordered_map<Node*, bool>::iterator it2=curPool.begin();it2!=curPool.end();it2++) {
-                    if(it2->first && it2->second) cout<<"("<<it2->first->x<<","<<it2->first->y<<")"<<", ";
-                }
-                cout<<endl;
-            }
+        for(unordered_map<Node*, Node* >::iterator it=edgeOutPool.begin();it!=edgeOutPool.end();it++) {
+            cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": "<<"("<<it->second->x<<","<<it->second->y<<")"<<endl;
         }
+
+        // for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeInPool.begin();it!=edgeInPool.end();it++) {
+        //     unordered_map<Node*, bool> curPool = it->second;
+        //     if(it->first){
+        //         cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": ";
+        //         for(unordered_map<Node*, bool>::iterator it2=curPool.begin();it2!=curPool.end();it2++) {
+        //             if(it2->first && it2->second) cout<<"("<<it2->first->x<<","<<it2->first->y<<")"<<", ";
+        //         }
+        //         cout<<endl;
+        //     }
+        // }
+        // cout<<endl<<"edgeOutPool: "<<endl;
+        // for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeOutPool.begin();it!=edgeOutPool.end();it++) {
+        //     unordered_map<Node*, bool> curPool = it->second;
+        //     if(it->first){
+        //         cout<<"("<<it->first->x<<","<<it->first->y<<")"<<": ";
+        //         for(unordered_map<Node*, bool>::iterator it2=curPool.begin();it2!=curPool.end();it2++) {
+        //             if(it2->first && it2->second) cout<<"("<<it2->first->x<<","<<it2->first->y<<")"<<", ";
+        //         }
+        //         cout<<endl;
+        //     }
+        // }
 
         // cout<<endl<<"edgeInPool: "<<endl;
         // for(unordered_map<Node*, unordered_map<Node*, bool> >::iterator it=edgeInPool.begin();it!=edgeInPool.end();it++) {
