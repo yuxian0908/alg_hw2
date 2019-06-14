@@ -2,5 +2,4 @@
 
 Epolygon::Epolygon()
 {
-    
 }

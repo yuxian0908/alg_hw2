@@ -13,11 +13,11 @@ bool onPoly(Node *n1, Node *n2);
 bool onEdge(Node *n1, Node *n2);
 bool comPoly(Node *n1, Node *n2);
 bool isCommon(Node *n1, Node *n2);
-bool containsNode(Node *n1, Node *n2);
 Node* reverseNode(Node *n);
 
 // merge two solid polygon
 void Spolygon::merge(Spolygon *s2){
+    Spolygon *s1 = this;
     Node* copiedS1 = copyNodes();
     Node* copiedS2 = s2->copyNodes();
 
@@ -30,8 +30,8 @@ void Spolygon::merge(Spolygon *s2){
     Node** junct = findJunct(copiedS2, curS1);
     Node *junctBegin = junct[0];
     Node *junctEnd = junct[1];
-    bool containCur = containsNode(copiedS2, curS1);
-    bool containNext = containsNode(copiedS2, nextS1);
+    bool containCur = s2->containsNode(curS1);
+    bool containNext = s2->containsNode(nextS1);
     if( !containCur ){ // if s2 does not contain current node
         nodePool.add(curS1);
         if(junctBegin==0 && !containNext){
@@ -58,8 +58,8 @@ void Spolygon::merge(Spolygon *s2){
         junct = findJunct(copiedS2, curS1);
         junctBegin = junct[0];
         junctEnd = junct[1];
-        containCur = containsNode(copiedS2, curS1);
-        containNext = containsNode(copiedS2, nextS1);
+        containCur = s2->containsNode(curS1);
+        containNext = s2->containsNode(nextS1);
         if( !containCur ){
             nodePool.add(curS1);
             if(junctBegin==0 && !containNext){
@@ -94,8 +94,8 @@ void Spolygon::merge(Spolygon *s2){
     junct = findJunct(copiedS1, curS2);
     junctBegin = junct[0];
     junctEnd = junct[1];
-    containCur = containsNode(copiedS1, curS2);
-    containNext = containsNode(copiedS1, nextS2);
+    containCur = s1->containsNode(curS2);
+    containNext = s1->containsNode(nextS2);
     if( !containCur ){ // if s2 does not contain current node
         nodePool.add(curS2);
         if(junctBegin==0 && !containNext){
@@ -122,8 +122,8 @@ void Spolygon::merge(Spolygon *s2){
         junct = findJunct(copiedS1, curS2);
         junctBegin = junct[0];
         junctEnd = junct[1];
-        containCur = containsNode(copiedS1, curS2);
-        containNext = containsNode(copiedS1, nextS2);
+        containCur = s1->containsNode(curS2);
+        containNext = s1->containsNode(nextS2);
         if( !containCur ){
             nodePool.add(curS2);
             if(junctBegin==0 && !containNext){
@@ -168,15 +168,47 @@ void Spolygon::merge(Spolygon *s2){
 
 
 // handle empty polygon
-    
+    Node* firR = nodePool.first();
+    Node* curR = firR;
+    Node* nextR = firR;
+    nodePool.remove(curR);
+    if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
+        nextR = nodePool.edgeOutPool[curR];
+        nodePool.removeOutEdge(curR);
+    }
+    curR->replaceNext(nextR);
+    curR = nextR;
+    while(curR!=firR){
+        nextR = firR;
+        nodePool.remove(curR);
+        if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
+            nextR = nodePool.edgeOutPool[curR];
+            nodePool.removeOutEdge(curR);
+        }
+        curR->replaceNext(nextR);
+        curR = nextR;
+    }
+    epo.push_back(firR);
+
+
 
 
 // reset the polygon
     resetFirstNode();
-    // nodePool.resetEdgePool();
-    // nodePool.resetNodePool();
     nodePool.printPool();
     nodePool.printEdgePool();
+    nodePool.resetEdgePool();
+    nodePool.resetNodePool();
+}
+
+void Spolygon::printPolygon(){
+    cout<<"SPolygon: "<<endl;
+    firstNode->printNodes();
+    cout<<endl<<"Epolygon: "<<endl;
+    for(int i=0; i<epo.size(); i++){
+        cout<<"epo"<<i<<": "<<endl;
+        epo[i]->printNodes();
+    }
 }
 
 /*    done     */
@@ -189,6 +221,25 @@ void Spolygon::merge(Spolygon *s2){
             n = n->next;
         }
         resetFirstNode();
+    }
+
+    bool Spolygon::containsNode(Node *n2){
+        Node* n1 = this->firstNode;
+        bool in = false;
+        Node *testN = new Node(n2->x, n2->y);
+        testN->replaceNext(new Node(INT_MAX, n2->y));
+
+        Node *curN = n1;
+        Node *tmp = junct(curN, testN);
+        if(tmp!=0) in = !in;
+
+        curN = curN -> next;
+        while(curN!=n1){
+            tmp = junct(curN, testN);
+            if(tmp!=0) in = !in;
+            curN = curN->next;
+        }
+        return in;
     }
 
     void Spolygon::resetFirstNode(){
@@ -245,6 +296,8 @@ void Spolygon::merge(Spolygon *s2){
         n1->replaceNext(n2);
     }
 
+
+    
 
 /*   pure functions  */
 
@@ -332,37 +385,6 @@ void Spolygon::merge(Spolygon *s2){
         return r;
     }
 
-    // check if a node (n2) is in a polygon (n1)
-    bool containsNode(Node *n1, Node *n2){
-        int smallX = INT_MAX;
-        int smallY = INT_MAX;
-        int bigX = INT_MIN;
-        int bigY = INT_MIN;
-
-
-        Node *initN = n1;
-        smallX = bigX = initN->x;
-        smallY = bigY = initN->y;
-
-        Node *curN = initN->next;
-
-        // bool on = false;
-        
-        while(curN != initN){
-            smallX = min(smallX, curN->x);
-            bigX = max(bigX, curN->x);
-            smallY = min(smallY, curN->y);
-            bigY = max(bigY, curN->y);
-
-            // on = onEdge(curN, n2);
-
-            curN = curN->next;
-        }
-        bool in = n2->x > smallX & n2->x < bigX & n2->y > smallY & n2->y < bigY;
-
-        // return in || on;
-        return in;
-    }
 
     // check if node n2 is on the edges of polygon n1
     bool onPoly(Node *n1, Node *n2){

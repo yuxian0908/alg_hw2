@@ -22,8 +22,11 @@ struct NodePool{
 
 // NODE POOL
     Node* first(){
-        int key = x_lists.begin()->first;
-        return x_lists[key]->val;
+        int first = INT_MAX;
+        for(unordered_map<int,ListNode*>::iterator it=x_lists.begin();it!=x_lists.end();it++) {
+            first = min(first, it->first);
+        }
+        return x_lists[first]->val;
     }
 
     void add(Node *n){
@@ -231,7 +234,19 @@ struct NodePool{
         return 0;
     }
 
-
+    Node* findPrev(Node *n, int dir){
+        dir = (dir+4)%4;
+        if(dir==0){
+            return yListNext(n);
+        }else if(dir==1){
+            return xListNext(n);
+        }else if(dir==2){
+            return yListPre(n);
+        }else if(dir==3){
+            return xListPre(n);
+        }
+        return 0;
+    }
 
     void printPool(){
         // print x_list

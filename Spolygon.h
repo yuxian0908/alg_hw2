@@ -2,6 +2,7 @@
 #define S_H
 #include "Epolygon.h"
 #include "NodePool.h"
+#include <vector>
 
 class Epolygon;
 
@@ -17,7 +18,10 @@ class Spolygon
 
         Node* copyNodes();
         void replaceNextNode(Node *n1, Node *n2);
+        bool containsNode(Node *n);
+        void printPolygon();
 
+        vector<Node*> epo;
         NodePool nodePool;
         Node *firstNode;
 
