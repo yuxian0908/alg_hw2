@@ -1,10 +1,16 @@
 #ifndef E_C
 #define E_C
 #include "Epolygon.h"
+#include "Spolygon.h"
 #include <limits.h>
 #include <algorithm>
 #include <stack>
 #include "Functions.h"
+
+
+void Epolygon::clip(Spolygon *s){
+
+}
 
 
 Epolygon::Epolygon(Node *n)

@@ -161,18 +161,10 @@ void Spolygon::merge(Spolygon *s2){
 
 
 // handle empty polygon
-    Node* firR = nodePool.first();
-    Node* curR = firR;
-    Node* nextR = firR;
-    nodePool.remove(curR);
-    if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
-        nextR = nodePool.edgeOutPool[curR];
-        nodePool.removeOutEdge(curR);
-    }
-    curR->replaceNext(nextR);
-    curR = nextR;
-    while(curR!=firR){
-        nextR = firR;
+    while(!nodePool.isEmpty()){
+        Node* firR = nodePool.first();
+        Node* curR = firR;
+        Node* nextR = firR;
         nodePool.remove(curR);
         if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
             nextR = nodePool.edgeOutPool[curR];
@@ -180,10 +172,23 @@ void Spolygon::merge(Spolygon *s2){
         }
         curR->replaceNext(nextR);
         curR = nextR;
+        while(curR!=firR){
+            nextR = firR;
+            nodePool.remove(curR);
+            if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
+                nextR = nodePool.edgeOutPool[curR];
+                nodePool.removeOutEdge(curR);
+            }
+            curR->replaceNext(nextR);
+            curR = nextR;
+        }
+        epo.push_back(new Epolygon(firR));
     }
-    epo.push_back(new Epolygon(firR));
+    
 
-
+    for(int i=0; i<epo.size(); i++){
+        epo[i]->clip(s2);
+    }
 
 
 // reset the polygon

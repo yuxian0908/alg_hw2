@@ -13,8 +13,8 @@ class Epolygon
     public:
         Epolygon(Node *n);
         ~Epolygon();
-        void merge(Spolygon *s);
-        void clip(Epolygon *e);
+        void merge(Epolygon *s);
+        void clip(Spolygon *e);
 
         void resetFirstNode(); // set the firstNode to be the left-bottom one
 

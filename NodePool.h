@@ -32,6 +32,11 @@ struct NodePool{
         return x_lists[first]->val;
     }
 
+    bool isEmpty(){
+        
+        return x_lists.empty();
+    }
+
     void add(Node *n){
         if(n==0) return;
         int x = n->x;
@@ -220,34 +225,6 @@ struct NodePool{
             curN = curN->next;
         }
         if(curN->val->x == x && curN!=x_lists[x]) return curN->pre->val;
-        return 0;
-    }
-
-    Node* findNext(Node *n, int dir){
-        dir = (dir+4)%4;
-        if(dir==0){
-            return yListNext(n);
-        }else if(dir==1){
-            return xListNext(n);
-        }else if(dir==2){
-            return yListPre(n);
-        }else if(dir==3){
-            return xListPre(n);
-        }
-        return 0;
-    }
-
-    Node* findPrev(Node *n, int dir){
-        dir = (dir+4)%4;
-        if(dir==0){
-            return yListNext(n);
-        }else if(dir==1){
-            return xListNext(n);
-        }else if(dir==2){
-            return yListPre(n);
-        }else if(dir==3){
-            return xListPre(n);
-        }
         return 0;
     }
 
