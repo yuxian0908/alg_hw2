@@ -18,205 +18,137 @@ Node* reverseNode(Node *n);
 
 // merge two solid polygon
 void Spolygon::merge(Spolygon *s2){
-    Spolygon *s1 = this;
-    Node* tmp;
+    Node* copiedS1 = copyNodes();
+    Node* copiedS2 = s2->copyNodes();
 
-// save nodes into nodePool
-    Node *saveN = s2->firstNode;
-    nodePool.add(saveN);
-    saveN = saveN->next;
-    while(saveN!=s2->firstNode){
-        nodePool.add(saveN);
-        saveN = saveN->next;
-    }
-    saveN = s1->firstNode;
-    nodePool.add(saveN);
-    saveN = saveN->next;
-    while(saveN!=s1->firstNode){
-        nodePool.add(saveN);
-        saveN = saveN->next;
-    }
+// go through s1 and store into pool
+    Node *firstS1 = copiedS1;
+    Node *curS1 = firstS1;
+    Node *nextS1 = curS1->next;
+    // check first node
 
-// save edges into edgePool
-    Node *saveN1 = s1->firstNode;
-    Node *saveN2 = saveN1->next;
-    nodePool.addEdge(saveN1, saveN2);
-    saveN1 = saveN2;
-    saveN2 = saveN2->next;
-    while(saveN1!=s1->firstNode){
-        nodePool.addEdge(saveN1, saveN2);
-        saveN1 = saveN2;
-        saveN2 = saveN2->next;
-    }
-
-    saveN1 = s2->firstNode;
-    saveN2 = saveN1->next;
-    nodePool.addEdge(saveN1, saveN2);
-    saveN1 = saveN2;
-    saveN2 = saveN2->next;
-    while(saveN1!=s2->firstNode){
-        nodePool.addEdge(saveN1, saveN2);
-        saveN1 = saveN2;
-        saveN2 = saveN2->next;
-    }
-
-// go through s1 to find and gather the junction nodes with s2
-
-    Node *s1CurN = s1->firstNode;
-    Node *s1nextN = s1CurN->next;
-
-    // check the first node
-    Node** junct = findJunct(s2->firstNode, s1CurN);
+    Node** junct = findJunct(copiedS2, curS1);
     Node *junctBegin = junct[0];
     Node *junctEnd = junct[1];
-
-    bool curIn = containsNode(s2->firstNode,s1CurN);
-    bool curOn = onPoly(s2->firstNode, s1CurN);
-    bool nexIn = containsNode(s2->firstNode,s1nextN);
-    bool nexOn = onPoly(s2->firstNode, s1nextN);
-    bool comm = comPoly(s2->firstNode, s1CurN);
-    if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
-        nodePool.remove(s1CurN->x, s1CurN->y);
-        nodePool.remove(s1nextN->x, s1nextN->y);
-    }else if( curIn && !(nexIn||nexOn) ){
-        nodePool.remove(s1CurN->x, s1CurN->y);
-    }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
-        nodePool.remove(s1nextN->x, s1nextN->y);
+    bool containCur = containsNode(copiedS2, curS1);
+    bool containNext = containsNode(copiedS2, nextS1);
+    if( !containCur ){ // if s2 does not contain current node
+        nodePool.add(curS1);
+        if(junctBegin==0 && !containNext){
+            nodePool.add(nextS1);
+            nodePool.addEdge(curS1, nextS1);
+        }
+        else if(junctBegin!=0){
+            nodePool.add(junctBegin);
+            nodePool.addEdge(curS1, junctBegin);
+        }
     }
-
-    // set junction in nodePool
-    nodePool.add(junctBegin);
-    nodePool.addEdge(s1CurN, junctBegin);
-    while(junctBegin!=junctEnd){
-        nodePool.add(junctBegin);
-        if(junctBegin->next) junctBegin = junctBegin->next;
+    if(!containNext){ // if s2 does not contain next node
+        nodePool.add(nextS1);
+        if(junctEnd!=0){
+            nodePool.add(junctEnd);
+            nodePool.addEdge(junctEnd, nextS1);
+        }
     }
-    if(junctBegin){
-        nodePool.add(junctBegin);
-        nodePool.addEdge(junctBegin, s1nextN);
-    }
-    s1CurN = s1nextN;
-    s1nextN = s1nextN->next;
+    
+    curS1 = nextS1;
+    nextS1 = nextS1->next;
 
-    // // check the other node
-    while(s1nextN!=0 & s1CurN != s1->firstNode){
-        junct = findJunct(s2->firstNode, s1CurN);
+    while(curS1!=firstS1){
+        junct = findJunct(copiedS2, curS1);
         junctBegin = junct[0];
         junctEnd = junct[1];
-
-        curIn = containsNode(s2->firstNode,s1CurN);
-        curOn = onPoly(s2->firstNode, s1CurN);
-        nexIn = containsNode(s2->firstNode,s1nextN);
-        nexOn = onPoly(s2->firstNode, s1nextN);
-        comm = comPoly(s2->firstNode, s1CurN);
-        if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
-            nodePool.remove(s1CurN->x, s1CurN->y);
-            nodePool.remove(s1nextN->x, s1nextN->y);
-        }else if( curIn && !(nexIn||nexOn) ){
-            nodePool.remove(s1CurN->x, s1CurN->y);
-        }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
-            nodePool.remove(s1nextN->x, s1nextN->y);
-        }
-    
-        // set junction in nodePool
-        nodePool.add(junctBegin);
-        nodePool.addEdge(s1CurN, junctBegin);
-        while(junctBegin!=junctEnd){
-            nodePool.add(junctBegin);
-            if(junctBegin->next) junctBegin = junctBegin->next;
-        }
-        if(junctBegin){
-            nodePool.add(junctBegin);
-            nodePool.addEdge(junctBegin, s1nextN);
-        }
-        s1CurN = s1nextN;
-        s1nextN = s1nextN->next;
-    }
-
-
-// go through s2 to remove some node
-    Node *s2CurN = s2->firstNode;
-    Node *s2nextN = s2CurN->next;
-
-    // check the first node
-    curIn = containsNode(s1->firstNode,s2CurN);
-    curOn = onPoly(s1->firstNode, s2CurN);
-    nexIn = containsNode(s1->firstNode,s2nextN);
-    nexOn = onPoly(s1->firstNode, s2nextN);
-    comm = comPoly(s1->firstNode, s2CurN);
-    if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
-        nodePool.remove(s2CurN->x, s2CurN->y);
-        nodePool.remove(s2nextN->x, s2nextN->y);
-    }else if( curIn && !(nexIn||nexOn) ){
-        nodePool.remove(s2CurN->x, s2CurN->y);
-    }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
-        nodePool.remove(s2nextN->x, s2nextN->y);
-    }
-    s2CurN = s2nextN;
-    s2nextN = s2nextN->next;
-
-    // check the other node
-    while(s2nextN!=0 & s2CurN != s2->firstNode){
-        curIn = containsNode(s1->firstNode,s2CurN);
-        curOn = onPoly(s1->firstNode, s2CurN);
-        nexIn = containsNode(s1->firstNode,s2nextN);
-        nexOn = onPoly(s1->firstNode, s2nextN);
-        comm = comPoly(s1->firstNode, s2CurN);
-        if( (curIn||curOn) && (nexIn||nexOn) ){ // if current and next node are in s2
-            nodePool.remove(s2CurN->x, s2CurN->y);
-            nodePool.remove(s2nextN->x, s2nextN->y);
-        }else if( curIn && !(nexIn||nexOn) ){
-            nodePool.remove(s2CurN->x, s2CurN->y);
-        }else if( ( (!(curIn||curOn)) && nexIn) || ( (!(curIn||curOn)) && nexOn && comm ) ){
-            nodePool.remove(s2nextN->x, s2nextN->y);
-        }
-        s2CurN = s2nextN;
-        s2nextN = s2nextN->next;
-    }
-
-
-    nodePool.printEdgePool();
-    nodePool.printPool();
-
-// concate all nodes to form a solid polygon
-    Node *cur = firstNode;
-    Node *next = nodePool.yListNext(cur); //find left
-    next = next==0 ? nodePool.xListNext(cur) :next; //find up
-    next = next==0 ? nodePool.yListPre(cur) :next; //find right
-    next = next==0 ? nodePool.xListPre(cur) :next; //find down
-
-    cur->replaceNext(next);
-    nodePool.remove(cur);
-
-    int lastDir = 0;
-    while(next!=0){
-        cur = next;
-        next = 0;
-        int nextDir = lastDir-1;
-
-        // for(int i=0; i<4; i++){
-        //     Node *tmp = nodePool.findNext(cur, nextDir+i);
-        //     if(nodePool.edgeOutPool[cur][tmp]) next = tmp;
-        // }
-
-        for(int i=0; i<4; i++){
-            if(next==0 && nextDir+i!=lastDir) next = nodePool.findNext(cur, nextDir+i);
-            if(next!=0){
-                lastDir = (nextDir+i)%4;
-                break;
+        containCur = containsNode(copiedS2, curS1);
+        containNext = containsNode(copiedS2, nextS1);
+        if( !containCur ){
+            nodePool.add(curS1);
+            if(junctBegin==0 && !containNext){
+                nodePool.add(nextS1);
+                nodePool.addEdge(curS1, nextS1);
+            }
+            else if(junctBegin!=0){
+                nodePool.add(junctBegin);
+                nodePool.addEdge(curS1, junctBegin);
             }
         }
-
-        cur->replaceNext(next);
-        nodePool.remove(cur);
+        if(!containNext){
+            nodePool.add(nextS1);
+            if(junctEnd!=0){
+                nodePool.add(junctEnd);
+                nodePool.addEdge(junctEnd, nextS1);
+            }
+        }
+        curS1 = nextS1;
+        nextS1 = nextS1->next;
     }
-    cur->replaceNext(firstNode);
-    resetFirstNode();
-    // nodePool.resetNodePool();
-    nodePool.printEdgePool();
-    nodePool.printPool();
 
-// concate remaining nodes to form empty polygons
+
+// go through s2 and store into pool
+    Node *firstS2 = copiedS2;
+    Node *curS2 = firstS2;
+    Node *nextS2 = curS2->next;
+
+    // check first node
+    junct = findJunct(copiedS1, curS2);
+    junctBegin = junct[0];
+    junctEnd = junct[1];
+    containCur = containsNode(copiedS1, curS2);
+    containNext = containsNode(copiedS1, nextS2);
+    if( !containCur ){ // if s2 does not contain current node
+        nodePool.add(curS2);
+        if(junctBegin==0 && !containNext){
+            nodePool.add(nextS2);
+            nodePool.addEdge(curS2, nextS1);
+        }
+        else if(junctBegin!=0){
+            nodePool.add(junctBegin);
+            nodePool.addEdge(curS2, junctBegin);
+        }
+    }
+    if(!containNext){ // if s2 does not contain next node
+        nodePool.add(nextS2);
+        if(junctEnd!=0){
+            nodePool.add(junctEnd);
+            nodePool.addEdge(junctEnd, nextS2);
+        }
+    }
+    
+    curS2 = nextS2;
+    nextS2 = nextS2->next;
+
+    while(curS2!=firstS2){
+        junct = findJunct(copiedS1, curS2);
+        junctBegin = junct[0];
+        junctEnd = junct[1];
+        containCur = containsNode(copiedS1, curS2);
+        containNext = containsNode(copiedS1, nextS2);
+        if( !containCur ){
+            nodePool.add(curS2);
+            if(junctBegin==0 && !containNext){
+                nodePool.add(nextS2);
+                nodePool.addEdge(curS2, nextS2);
+            }
+            else if(junctBegin!=0){
+                nodePool.add(junctBegin);
+                nodePool.addEdge(curS2, junctBegin);
+            }
+        }
+        if(!containNext){
+            nodePool.add(nextS2);
+            if(junctEnd!=0){
+                nodePool.add(junctEnd);
+                nodePool.addEdge(junctEnd, nextS2);
+            }
+        }
+        curS2 = nextS2;
+        nextS2 = nextS2->next;
+    }
+
+    nodePool.printPool();
+    nodePool.printEdgePool();
+
+// merge all nodes
+    curS1 = this->firstNode;
 
 }
 
@@ -225,10 +157,8 @@ void Spolygon::merge(Spolygon *s2){
     // solid polygon contructor
     Spolygon::Spolygon(Node *n){
         this->firstNode = n;
-        nodePool.add(n);
         n = n->next;
         while(n!=this->firstNode){
-            nodePool.add(n);
             n = n->next;
         }
         resetFirstNode();
@@ -283,8 +213,8 @@ void Spolygon::merge(Spolygon *s2){
 
     void Spolygon::replaceNextNode(Node *n1, Node *n2){
         Node* delN = n1->next;
-        if(delN!=0) nodePool.remove(delN->x, delN->y);
-        nodePool.add(n2);
+        // if(delN!=0) nodePool.remove(delN->x, delN->y);
+        // nodePool.add(n2);
         n1->replaceNext(n2);
     }
 

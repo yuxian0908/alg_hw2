@@ -8,10 +8,10 @@ int main(){
 
     // first polygon
     Node *n1, *n2, *n3, *n4;
-    n1 = new Node(0, 0);
+    n1 = new Node(50, 0);
     n2 = new Node(100, 0);
-    n3 = new Node(100, 100);
-    n4 = new Node(0, 100);
+    n3 = new Node(100, 200);
+    n4 = new Node(50, 200);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
@@ -27,8 +27,8 @@ int main(){
     // second polygon
     n1 = new Node(0, 50);
     n2 = new Node(200, 50);
-    n3 = new Node(200, 150);
-    n4 = new Node(0, 150);
+    n3 = new Node(200, 100);
+    n4 = new Node(0, 100);
 
     n1->replaceNext(n2);
     n2->replaceNext(n3);
@@ -46,26 +46,26 @@ int main(){
     s1->firstNode->printNodes();
 
 
-    // third polygon
-    cout<<endl<<"third"<<endl;
-    n1 = new Node(200, 0);
-    n2 = new Node(300, 0);
-    n3 = new Node(300, 100);
-    n4 = new Node(200, 100);
+    // // third polygon
+    // cout<<endl<<"third"<<endl;
+    // n1 = new Node(200, 0);
+    // n2 = new Node(300, 0);
+    // n3 = new Node(300, 100);
+    // n4 = new Node(200, 100);
 
-    n1->replaceNext(n2);
-    n2->replaceNext(n3);
-    n3->replaceNext(n4);
-    n4->replaceNext(n1);
+    // n1->replaceNext(n2);
+    // n2->replaceNext(n3);
+    // n3->replaceNext(n4);
+    // n4->replaceNext(n1);
 
-    Spolygon *s3 = new Spolygon(n1);
-    s3->firstNode->printNodes();
+    // Spolygon *s3 = new Spolygon(n1);
+    // s3->firstNode->printNodes();
 
-    // merge s1 s3
-    cout<<endl<<"merge"<<endl;
-    s1->merge(s3);
+    // // merge s1 s3
+    // cout<<endl<<"merge"<<endl;
+    // s1->merge(s3);
 
-    s1->firstNode->printNodes();
+    // s1->firstNode->printNodes();
 
     
     
