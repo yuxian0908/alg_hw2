@@ -201,15 +201,6 @@ void Spolygon::merge(Spolygon *s2){
     nodePool.resetNodePool();
 }
 
-void Spolygon::printPolygon(){
-    cout<<"SPolygon: "<<endl;
-    firstNode->printNodes();
-    cout<<endl<<"Epolygon: "<<endl;
-    for(int i=0; i<epo.size(); i++){
-        cout<<"epo"<<i<<": "<<endl;
-        epo[i]->printNodes();
-    }
-}
 
 /*    done     */
 
@@ -222,6 +213,17 @@ void Spolygon::printPolygon(){
         }
         resetFirstNode();
     }
+
+    void Spolygon::printPolygon(){
+        cout<<"SPolygon: "<<endl;
+        firstNode->printNodes();
+        cout<<endl<<"Epolygon: "<<endl;
+        for(int i=0; i<epo.size(); i++){
+            cout<<"epo"<<i<<": "<<endl;
+            epo[i]->printNodes();
+        }
+    }
+
 
     bool Spolygon::containsNode(Node *n2){
         Node* n1 = this->firstNode;
@@ -289,15 +291,7 @@ void Spolygon::printPolygon(){
         return res;
     }
 
-    void Spolygon::replaceNextNode(Node *n1, Node *n2){
-        Node* delN = n1->next;
-        // if(delN!=0) nodePool.remove(delN->x, delN->y);
-        // nodePool.add(n2);
-        n1->replaceNext(n2);
-    }
 
-
-    
 
 /*   pure functions  */
 
@@ -427,7 +421,6 @@ void Spolygon::printPolygon(){
         if( n1->y == n1->next->y && n1->next->y == n2->y && n2->next->y == n2->y) comm=true;
         return comm;
     }
-
 
     Node* reverseNode(Node *n){
         Node* res = new Node(0,0);

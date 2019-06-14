@@ -1,6 +1,3 @@
-#ifndef S_H
-#define S_H
-#include "Epolygon.h"
 #include "NodePool.h"
 #include <vector>
 
@@ -17,7 +14,6 @@ class Spolygon
         void resetFirstNode(); // set the firstNode to be the left-bottom one
 
         Node* copyNodes();
-        void replaceNextNode(Node *n1, Node *n2);
         bool containsNode(Node *n);
         void printPolygon();
 
@@ -27,4 +23,20 @@ class Spolygon
 
 };
 
-#endif
+// empty polygon
+class Epolygon
+{
+    public:
+        Epolygon(Node *n);
+        ~Epolygon();
+        void merge(Spolygon *s);
+        void clip(Epolygon *e);
+
+        void resetFirstNode(); // set the firstNode to be the left-bottom one
+
+        Node* copyNodes();
+        bool containsNode(Node *n);
+        void printPolygon();
+        NodePool nodePool;
+        Node *firstNode;
+};
