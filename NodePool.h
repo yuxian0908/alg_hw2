@@ -1,3 +1,6 @@
+#ifndef NP_H
+#define NP_H
+
 #include "Node.h"
 #include <unordered_map> 
 
@@ -369,3 +372,5 @@ struct NodePool{
 };
 
 
+
+#endif

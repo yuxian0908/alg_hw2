@@ -1,4 +1,9 @@
+#ifndef H_C
+#define H_C
 #include "Functions.h"
+#include "Node.h"
+#include "NodePool.h"
+#include <stack>
 
 /*   pure functions  */
 
@@ -148,3 +153,5 @@
 
         return res->next;
     }
+
+#endif

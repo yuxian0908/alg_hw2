@@ -1,3 +1,5 @@
+#ifndef N_H
+#define N_H
 #include <iostream>
 using namespace std;
 
@@ -33,3 +35,5 @@ struct Node{
         }
     }
 };
+
+#endif

@@ -1,7 +1,10 @@
-#include "Spolygon.h"
+#ifndef E_C
+#define E_C
+#include "Epolygon.h"
 #include <limits.h>
 #include <algorithm>
 #include <stack>
+#include "Functions.h"
 
 
 Epolygon::Epolygon(Node *n)
@@ -60,21 +63,28 @@ Node* Epolygon::copyNodes(){
     return res;
 }
 
-// bool Epolygon::containsNode(Node *n2){
-//     Node* n1 = this->firstNode;
-//     bool in = false;
-//     Node *testN = new Node(n2->x, n2->y);
-//     testN->replaceNext(new Node(INT_MAX, n2->y));
+bool Epolygon::containsNode(Node *n2){
+    Node* n1 = this->firstNode;
+    bool in = false;
+    Node *testN = new Node(n2->x, n2->y);
+    testN->replaceNext(new Node(INT_MAX, n2->y));
 
-//     Node *curN = n1;
-//     Node *tmp = junct(curN, testN);
-//     if(tmp!=0) in = !in;
+    Node *curN = n1;
+    Node *tmp = junct(curN, testN);
+    if(tmp!=0) in = !in;
 
-//     curN = curN -> next;
-//     while(curN!=n1){
-//         tmp = junct(curN, testN);
-//         if(tmp!=0) in = !in;
-//         curN = curN->next;
-//     }
-//     return in;
-// }
+    curN = curN -> next;
+    while(curN!=n1){
+        tmp = junct(curN, testN);
+        if(tmp!=0) in = !in;
+        curN = curN->next;
+    }
+    return in;
+}
+
+void Epolygon::printPolygon(){
+    firstNode->printNodes();
+}
+
+
+#endif
