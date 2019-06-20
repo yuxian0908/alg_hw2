@@ -1,5 +1,6 @@
 #ifndef S_C
 #define S_C
+
 #include "Spolygon.h"
 #include <limits.h>
 #include <algorithm>
@@ -75,9 +76,6 @@ void Spolygon::merge(Spolygon *s2){
         nextS1 = nextS1->next;
     }
 
-    nodePool.printPool();
-    nodePool.printEdgePool();
-
 // go through s2 and store into pool
     Node *firstS2 = copiedS2;
     Node *curS2 = firstS2;
@@ -138,7 +136,6 @@ void Spolygon::merge(Spolygon *s2){
         curS2 = nextS2;
         nextS2 = nextS2->next;
     }
-
     nodePool.printPool();
     nodePool.printEdgePool();
 
@@ -147,28 +144,36 @@ void Spolygon::merge(Spolygon *s2){
     firstS1 = this->firstNode;
     curS1 = firstS1;
     nextS1 = nodePool.edgeOutPool[curS1];
-    nodePool.removeOutEdge(curS1);
+    nodePool.removeEdge(curS1);
     curS1->replaceNext(nextS1);
     nodePool.remove(curS1);
     curS1 = nextS1;
     while(curS1!=firstS1){
         nextS1 = nodePool.edgeOutPool[curS1];
-        nodePool.removeOutEdge(curS1);
+        nodePool.removeEdge(curS1);
         curS1->replaceNext(nextS1);
         nodePool.remove(curS1);
         curS1 = nextS1;
     }
+    nodePool.printPool();
+    nodePool.printEdgePool();
 
 
 // handle empty polygon
     while(!nodePool.isEmpty()){
+
+        // find first node
         Node* firR = nodePool.first();
+        while(nodePool.edgeInPool.find(firR)!=nodePool.edgeInPool.end()){
+            firR = nodePool.edgeInPool[firR];
+        }
+
         Node* curR = firR;
         Node* nextR = firR;
         nodePool.remove(curR);
         if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
             nextR = nodePool.edgeOutPool[curR];
-            nodePool.removeOutEdge(curR);
+            nodePool.removeEdge(curR);
         }
         curR->replaceNext(nextR);
         curR = nextR;
@@ -177,7 +182,7 @@ void Spolygon::merge(Spolygon *s2){
             nodePool.remove(curR);
             if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
                 nextR = nodePool.edgeOutPool[curR];
-                nodePool.removeOutEdge(curR);
+                nodePool.removeEdge(curR);
             }
             curR->replaceNext(nextR);
             curR = nextR;
@@ -264,9 +269,6 @@ void Spolygon::clip(Epolygon *s2){
         nextS1 = nextS1->next;
     }
 
-    nodePool.printPool();
-    nodePool.printEdgePool();
-
 // go through s2 and store into pool
     Node *firstS2 = copiedS2;
     Node *curS2 = firstS2;
@@ -328,21 +330,18 @@ void Spolygon::clip(Epolygon *s2){
         nextS2 = nextS2->next;
     }
 
-    nodePool.printPool();
-    nodePool.printEdgePool();
-
 // merge all nodes
     this->firstNode = nodePool.first();
     firstS1 = this->firstNode;
     curS1 = firstS1;
     nextS1 = nodePool.edgeOutPool[curS1];
-    nodePool.removeOutEdge(curS1);
+    nodePool.removeEdge(curS1);
     curS1->replaceNext(nextS1);
     nodePool.remove(curS1);
     curS1 = nextS1;
     while(curS1!=firstS1){
         nextS1 = nodePool.edgeOutPool[curS1];
-        nodePool.removeOutEdge(curS1);
+        nodePool.removeEdge(curS1);
         curS1->replaceNext(nextS1);
         nodePool.remove(curS1);
         curS1 = nextS1;
@@ -350,13 +349,19 @@ void Spolygon::clip(Epolygon *s2){
 
 // handle empty polygon
     while(!nodePool.isEmpty()){
+
+        // find first node
         Node* firR = nodePool.first();
+        while(nodePool.edgeInPool.find(firR)!=nodePool.edgeInPool.end()){
+            firR = nodePool.edgeInPool[firR];
+        }
+
         Node* curR = firR;
         Node* nextR = firR;
         nodePool.remove(curR);
         if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
             nextR = nodePool.edgeOutPool[curR];
-            nodePool.removeOutEdge(curR);
+            nodePool.removeEdge(curR);
         }
         curR->replaceNext(nextR);
         curR = nextR;
@@ -365,7 +370,7 @@ void Spolygon::clip(Epolygon *s2){
             nodePool.remove(curR);
             if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
                 nextR = nodePool.edgeOutPool[curR];
-                nodePool.removeOutEdge(curR);
+                nodePool.removeEdge(curR);
             }
             curR->replaceNext(nextR);
             curR = nextR;
@@ -381,10 +386,10 @@ void Spolygon::clip(Epolygon *s2){
 
 // reset the polygon
     resetFirstNode();
-    nodePool.printPool();
-    nodePool.printEdgePool();
     nodePool.resetEdgePool();
     nodePool.resetNodePool();
+    nodePool.printPool();
+    nodePool.printEdgePool();
 
 }
 

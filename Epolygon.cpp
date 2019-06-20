@@ -9,7 +9,7 @@
 
 
 void Epolygon::clip(Spolygon *s){
-
+    
 }
 
 void Epolygon::merge(Epolygon *s){

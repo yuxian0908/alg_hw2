@@ -289,8 +289,10 @@ struct NodePool{
         edgeOutPool.clear();
     }
 
-    void removeOutEdge(Node* n){
+    void removeEdge(Node* n){
+        Node* in = edgeOutPool[n];
         edgeOutPool.erase(n);
+        edgeInPool.erase(in);
     }
 
     void printEdgePool(){
