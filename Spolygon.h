@@ -18,6 +18,7 @@ class Spolygon
         Node* copyNodes();
         bool containsNode(Node *n);
         void printPolygon();
+        void test(Spolygon *s);
 
         vector<Epolygon*> epo;
         NodePool nodePool;

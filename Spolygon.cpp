@@ -136,8 +136,8 @@ void Spolygon::merge(Spolygon *s2){
         curS2 = nextS2;
         nextS2 = nextS2->next;
     }
-    // nodePool.printPool();
-    // nodePool.printEdgePool();
+    nodePool.printPool();
+    nodePool.printEdgePool();
 
 // merge all nodes
     this->firstNode = nodePool.first();
@@ -209,9 +209,9 @@ void Spolygon::clip(Epolygon *s2){
     Node* copiedS1 = copyNodes();
 
 // handle empty polygon
-    for(int i=0; i<epo.size(); i++){
-        s2->merge(epo[i]);
-    }
+    // for(int i=0; i<epo.size(); i++){
+    //     s2->merge(epo[i]);
+    // }
     Node* copiedS2 = s2->copyNodes();
     
 // go through s1 and store into pool
@@ -362,6 +362,11 @@ void Spolygon::clip(Epolygon *s2){
 
 }
 
+void Spolygon::test(Spolygon *s2){
+    Node *test = findOnJunct(this->firstNode->next, s2->firstNode);
+    if(test) cout<<"why? "<<test->x<<","<<test->y<<endl;
+
+}
 
 /*    done     */
 

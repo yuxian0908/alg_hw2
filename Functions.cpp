@@ -16,6 +16,21 @@
         return cross(o, n1, n2);
     }
 
+    float dot(Node *o, Node* n1, Node* n2){
+        return (n1->x - o->x) * (n2->x - o->x) + (n1->y - o->y) * (n2->y - o->y);
+    }
+    float dot(Node* n1, Node* n2){
+        Node *o = new Node(0,0,0);
+        return dot(o, n1, n2);
+    }
+
+    bool intersect(Node* p, Node* p1, Node* p2){
+        // cout<<dot(p, p1, p2)<<"intersect"<<endl;
+        return cross(p, p1, p2) == 0
+            && dot(p, p1, p2) <= 0;
+    }
+
+
     // given two vector, return their junction
     Node* junct(Node *n1, Node *n2){
         float c1 = cross(n1, n1->next, n2);
@@ -30,6 +45,47 @@
         if (c1 * c2 < 0 && c3 * c4 < 0)
             return *n1 + *t;
         else return 0;
+    }
+
+    // given a node(n1) and a vector(n2), return if n1 is on n2
+    Node* onJunct(Node *n1, Node *n2){
+        Node *a1 = n1;
+        Node *a2 = n1->next;
+        Node *b1 = n2;
+        Node *b2 = n2->next;
+
+        float c1 = cross(a1, a2, b1);
+        float c2 = cross(a1, a2, b2);
+        float c3 = cross(b1, b2, a1);
+        float c4 = cross(b1, b2, a2);
+
+        if (c1 == 0 && c2 == 0){
+            if (a1 == b1 && dot(a1, a2, b2) <= 0) return a1;
+            if (a1 == b2 && dot(a1, a2, b1) <= 0) return a1;
+            // if (a2 == b1 && dot(a2, a1, b2) <= 0) return a2;
+            // if (a2 == b2 && dot(a2, a1, b1) <= 0) return a2;
+        }
+        // to determine whether the point is on the polygon
+        // if (c1 == 0 && intersect(b1, a1, a2)) return b1;
+        // if (c2 == 0 && intersect(b2, a1, a2)) return b2;
+        if (c3 == 0 && intersect(a1, b1, b2)) return a1;
+        // if (c4 == 0 && intersect(a2, b1, b2)) return a2;
+
+        return 0;
+    }
+
+    // given a polygon(n1) and a vector(n2), return their on junction node
+    Node* findOnJunct(Node *n1, Node *n2){
+        Node *curN = n1;
+        Node *res = onJunct(n2, curN);
+        // cout<<res<<endl;
+        curN = curN -> next;
+        while(curN!=n1){
+            if(res==0) res = onJunct(n2, curN);
+            // cout<<res<<endl;
+            curN = curN->next;
+        }
+        return res;
     }
 
     // given a polygon(n1) and a vector(n2), return their junction nodes
@@ -91,49 +147,6 @@
         return r;
     }
 
-
-    // check if node n2 is on the edges of polygon n1
-    bool onPoly(Node *n1, Node *n2){
-        Node *initN = n1;
-        Node *curN = initN->next;
-        bool on = false;
-        while(curN != initN){
-            on = onEdge(curN, n2);
-            curN = curN->next;
-        }
-        return on;
-    }
-
-    // check if n2 is on the edge (n1, n1->next)
-    bool onEdge(Node *n1, Node *n2){
-        bool on = false;
-        if( (n1->x == n1->next->x && n1->next->x == n2->x) &&
-            ( (n2->y - n1->y)*(n2->y - n1->next->y) <= 0) ) on=true;
-        if( (n1->y == n1->next->y && n1->next->y == n2->y) &&
-            ( (n2->x - n1->x)*(n2->x - n1->next->x) <= 0) ) on=true;
-        return on;
-    }
-
-    // check if edge (n2, n2->next) has common edge on the edges of polygon n1
-    bool comPoly(Node *n1, Node *n2){
-        Node *initN = n1;
-        Node *curN = initN->next;
-        bool comm = false;
-        while(curN != initN){
-            comm = isCommon(curN, n2);
-            curN = curN->next;
-        }
-        return comm;
-    }
-
-    // check if n2(n2, n2->next) is common edge of the edge (n1, n1->next)
-    bool isCommon(Node *n1, Node *n2){
-        bool comm = false;
-        if( n1->x == n1->next->x && n1->next->x == n2->x && n2->next->x == n2->x) comm=true;
-        if( n1->y == n1->next->y && n1->next->y == n2->y && n2->next->y == n2->y) comm=true;
-        return comm;
-    }
-
     Node* reverseNode(Node *n){
         Node* res = new Node(0,0);
         stack<Node*> s;
@@ -153,5 +166,6 @@
 
         return res->next;
     }
+
 
 #endif
