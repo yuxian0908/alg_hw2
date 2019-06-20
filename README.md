@@ -31,6 +31,9 @@
 
 # TODO
 1. (done) Spolygon裡的Epolygon製造方式目前有誤，應該要先找出head之後再開始接，現在這樣只是找隨便一個而已
-2. 萬一操作剛好是在firstNode的情形
-3. containNode裡面水平最遠的那個點要思考一下如何處理
-2. Epolygon clip, merge
+2. (done) Epolygon clip, merge
+3. 萬一操作剛好是在firstNode的情形
+4. containNode裡面水平最遠的那個點要思考一下如何處理
+5. Spolygon merge, clip裡的epolygon操作記得加上去
+6. 共線問題
+7. merge卻完全沒有重疊問題

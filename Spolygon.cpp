@@ -136,8 +136,8 @@ void Spolygon::merge(Spolygon *s2){
         curS2 = nextS2;
         nextS2 = nextS2->next;
     }
-    nodePool.printPool();
-    nodePool.printEdgePool();
+    // nodePool.printPool();
+    // nodePool.printEdgePool();
 
 // merge all nodes
     this->firstNode = nodePool.first();
@@ -155,8 +155,8 @@ void Spolygon::merge(Spolygon *s2){
         nodePool.remove(curS1);
         curS1 = nextS1;
     }
-    nodePool.printPool();
-    nodePool.printEdgePool();
+    // nodePool.printPool();
+    // nodePool.printEdgePool();
 
 
 // handle empty polygon
@@ -191,15 +191,15 @@ void Spolygon::merge(Spolygon *s2){
     }
     
 
-    for(int i=0; i<epo.size(); i++){
-        epo[i]->clip(s2);
-    }
+    // for(int i=0; i<epo.size(); i++){
+    //     epo[i]->clip(s2);
+    // }
 
 
 // reset the polygon
     resetFirstNode();
-    nodePool.printPool();
-    nodePool.printEdgePool();
+    // nodePool.printPool();
+    // nodePool.printEdgePool();
     nodePool.resetEdgePool();
     nodePool.resetNodePool();
 }
@@ -207,7 +207,13 @@ void Spolygon::merge(Spolygon *s2){
 void Spolygon::clip(Epolygon *s2){
     Spolygon *s1 = this;
     Node* copiedS1 = copyNodes();
+
+// handle empty polygon
+    // for(int i=0; i<epo.size(); i++){
+    //     s2->merge(epo[i]);
+    // }
     Node* copiedS2 = s2->copyNodes();
+    
 // go through s1 and store into pool
     Node *firstS1 = copiedS1;
     Node *curS1 = firstS1;
@@ -346,43 +352,6 @@ void Spolygon::clip(Epolygon *s2){
         nodePool.remove(curS1);
         curS1 = nextS1;
     }
-
-// handle empty polygon
-    while(!nodePool.isEmpty()){
-
-        // find first node
-        Node* firR = nodePool.first();
-        while(nodePool.edgeInPool.find(firR)!=nodePool.edgeInPool.end()){
-            firR = nodePool.edgeInPool[firR];
-        }
-
-        Node* curR = firR;
-        Node* nextR = firR;
-        nodePool.remove(curR);
-        if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
-            nextR = nodePool.edgeOutPool[curR];
-            nodePool.removeEdge(curR);
-        }
-        curR->replaceNext(nextR);
-        curR = nextR;
-        while(curR!=firR){
-            nextR = firR;
-            nodePool.remove(curR);
-            if( nodePool.edgeOutPool.find(curR)!=nodePool.edgeOutPool.end() ){
-                nextR = nodePool.edgeOutPool[curR];
-                nodePool.removeEdge(curR);
-            }
-            curR->replaceNext(nextR);
-            curR = nextR;
-        }
-        epo.push_back(new Epolygon(firR));
-    }
-    
-
-    for(int i=0; i<epo.size(); i++){
-        epo[i]->merge(s2);
-    }
-
 
 // reset the polygon
     resetFirstNode();
