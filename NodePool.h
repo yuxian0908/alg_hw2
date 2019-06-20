@@ -3,6 +3,9 @@
 
 #include "Node.h"
 #include <unordered_map> 
+#include <limits.h>
+
+using namespace std;
 
 // linkedList which value is Node
 struct ListNode{

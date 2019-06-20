@@ -198,8 +198,8 @@ void Spolygon::merge(Spolygon *s2){
 
 // reset the polygon
     resetFirstNode();
-    // nodePool.printPool();
-    // nodePool.printEdgePool();
+    nodePool.printPool();
+    nodePool.printEdgePool();
     nodePool.resetEdgePool();
     nodePool.resetNodePool();
 }
@@ -209,9 +209,9 @@ void Spolygon::clip(Epolygon *s2){
     Node* copiedS1 = copyNodes();
 
 // handle empty polygon
-    // for(int i=0; i<epo.size(); i++){
-    //     s2->merge(epo[i]);
-    // }
+    for(int i=0; i<epo.size(); i++){
+        s2->merge(epo[i]);
+    }
     Node* copiedS2 = s2->copyNodes();
     
 // go through s1 and store into pool
@@ -387,22 +387,45 @@ void Spolygon::clip(Epolygon *s2){
 
 
     bool Spolygon::containsNode(Node *n2){
+
+        // check right
         Node* n1 = this->firstNode;
-        bool in = false;
+        bool Rin = false;
         Node *testN = new Node(n2->x, n2->y);
-        testN->replaceNext(new Node(10000, n2->y));
+        testN->replaceNext(new Node(1000000, n2->y));
         
         Node *curN = n1;
         Node *tmp = junct(curN, testN);
-        if(tmp!=0) in = !in;
+        if(tmp!=0) Rin = !Rin;
 
         curN = curN -> next;
         while(curN!=n1){
             tmp = junct(curN, testN);
-            if(tmp!=0) in = !in;
+            if(tmp!=0) Rin = !Rin;
             curN = curN->next;
         }
-        return in;
+
+        // // check left
+        // bool Lin = false;
+        // testN->replaceNext(new Node(-1000000, n2->y));
+
+        // curN = n1;
+        // tmp = junct(curN, testN);
+
+        // if(tmp!=0) Lin = !Lin;
+
+        // curN = curN -> next;
+        // while(curN!=n1){
+        //     tmp = junct(curN, testN);
+        //     if(tmp!=0) Lin = !Lin;
+        //     curN = curN->next;
+        // }
+
+
+
+        // return Rin&Lin;
+
+        return Rin;
     }
 
     void Spolygon::resetFirstNode(){

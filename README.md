@@ -28,8 +28,15 @@
 連續兩點連線split
 ```
 
+## Test on Linux
+```
+1. scp -P 40051 -r ./tmp alu1847@edaunion.ee.ntu.edu.tw:./
+2. ssh alu1847@edaunion.ee.ntu.edu.tw -p 40051
+3. EeHijav2
+```
 
-# TODO
+
+## TODO
 1. (done) Spolygon裡的Epolygon製造方式目前有誤，應該要先找出head之後再開始接，現在這樣只是找隨便一個而已
 2. (done) Epolygon clip, merge
 3. 萬一操作剛好是在firstNode的情形

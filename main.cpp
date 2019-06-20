@@ -1,6 +1,5 @@
 #include "main.h"
 #include "Spolygon.h"
-#include "Epolygon.h"
 #include <fstream>
 #include <string>
 #include <string.h>

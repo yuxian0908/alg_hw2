@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm> 
 #include "Spolygon.h"
-#include "Epolygon.h"
 using namespace std;
 
 bool compare(int low, int up, int *x1, int sec_lower, int sec_upper){

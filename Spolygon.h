@@ -1,7 +1,6 @@
 #ifndef S_H
 #define S_H
 #include "NodePool.h"
-#include "Epolygon.h"
 #include <vector>
 
 class Epolygon;
@@ -24,6 +23,16 @@ class Spolygon
         NodePool nodePool;
         Node *firstNode;
 
+};
+
+// empty polygon
+class Epolygon: public Spolygon
+{
+    public:
+        Epolygon(Node *n):Spolygon(n){};
+        ~Epolygon();
+        void merge(Epolygon *s);
+        void clip(Spolygon *e);
 };
 
 #endif
