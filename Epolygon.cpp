@@ -12,6 +12,9 @@ void Epolygon::clip(Spolygon *s){
 
 }
 
+void Epolygon::merge(Epolygon *s){
+
+}
 
 Epolygon::Epolygon(Node *n)
 {
@@ -73,7 +76,7 @@ bool Epolygon::containsNode(Node *n2){
     Node* n1 = this->firstNode;
     bool in = false;
     Node *testN = new Node(n2->x, n2->y);
-    testN->replaceNext(new Node(INT_MAX, n2->y));
+    testN->replaceNext(new Node(100000, testN->y));
 
     Node *curN = n1;
     Node *tmp = junct(curN, testN);
