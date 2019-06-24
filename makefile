@@ -1,5 +1,9 @@
+INC=-I./
+
+default: all
+
 all:
-	g++ -std=c++0x main.cpp Split.cpp Functions.cpp Epolygon.cpp Spolygon.cpp -o main.exe
+	g++ -std=c++0x -Wall $(INC) main.cpp Split.cpp Spolygon.cpp -o main.exe
 
 test:
-	g++ -std=c++0x main2.cpp Split.cpp Functions.cpp Epolygon.cpp Spolygon.cpp -o main.exe
+	g++ -std=c++0x -Wall $(INC) main2.cpp Spolygon.cpp -o main.exe

@@ -1,9 +1,12 @@
 #ifndef S_H
 #define S_H
 #include "NodePool.h"
-#include <vector>
+#include <boost/polygon/polygon.hpp>
 
-class Epolygon;
+using namespace boost::polygon;
+using namespace boost::polygon::operators;
+
+typedef polygon_45_with_holes_data<int> PolygonWithHole;
 
 // solid polygon
 class Spolygon
@@ -12,28 +15,11 @@ class Spolygon
         Spolygon(Node *n);
         ~Spolygon();
         void merge(Spolygon *s);
-        void clip(Epolygon *e);
-        void resetFirstNode(); // set the firstNode to be the left-bottom one
-
-        Node* copyNodes();
-        bool containsNode(Node *n);
+        void clip(Spolygon *s);
         void printPolygon();
-        void test(Spolygon *s);
-
-        vector<Epolygon*> epo;
+        void storeInPool();
+        vector<PolygonWithHole> poly;
         NodePool nodePool;
-        Node *firstNode;
-
-};
-
-// empty polygon
-class Epolygon: public Spolygon
-{
-    public:
-        Epolygon(Node *n):Spolygon(n){};
-        ~Epolygon();
-        void merge(Epolygon *s);
-        void clip(Spolygon *e);
 };
 
 #endif

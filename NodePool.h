@@ -40,6 +40,10 @@ struct NodePool{
         return x_lists.empty();
     }
 
+    void add(int x, int y){
+        add(new Node(x, y));
+    }
+
     void add(Node *n){
         if(n==0) return;
         int x = n->x;
@@ -283,8 +287,9 @@ struct NodePool{
         if(n1==0 || n2==0) return;
         n1 = find(n1);
         n2 = find(n2);
-        edgeOutPool[n1] = n2;
-        edgeInPool[n2] = n1;
+        if(n1==n2) return;
+        if(edgeOutPool.find(n1)==edgeOutPool.end()) edgeOutPool[n1] = n2;
+        if(edgeInPool.find(n2)==edgeInPool.end()) edgeInPool[n2] = n1;
     }
 
     void resetEdgePool(){
