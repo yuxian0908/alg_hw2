@@ -2,7 +2,7 @@
 #define NP_H
 
 #include "Node.h"
-#include <unordered_map> 
+#include <map> 
 #include <limits.h>
 
 using namespace std;
@@ -20,13 +20,29 @@ struct ListNode{
 };
 
 struct NodePool{
-    unordered_map<int, ListNode*> x_lists; // lists index by x (incrementing)
-    unordered_map<int, ListNode*> y_lists; // lists index by y (incrementing)
+    map<int, ListNode*> x_lists; // lists index by x (incrementing)
+    map<int, ListNode*> y_lists; // lists index by y (incrementing)
 
 
     bool isEmpty(){
         
         return x_lists.empty();
+    }
+
+    int x_first(){
+        int m = INT_MAX;
+        for(map<int,ListNode*>::iterator it=x_lists.begin();it!=x_lists.end();it++) {
+            m = min(m, it->first);
+        }
+        return m;
+    }
+
+    int y_first(){
+        int m = INT_MAX;
+        for(map<int,ListNode*>::iterator it=y_lists.begin();it!=y_lists.end();it++) {
+            m = min(m, it->first);
+        }
+        return m;
     }
 
     void add(int x, int y){
@@ -105,10 +121,15 @@ struct NodePool{
         return 0;
     }
 
+    void reset(){
+        x_lists.clear();
+        y_lists.clear();
+    }
+
     void printPool(){
         // print x_list
         cout<<endl<<"x_list: "<<endl;
-        for(unordered_map<int,ListNode*>::iterator it=x_lists.begin();it!=x_lists.end();it++) {
+        for(map<int,ListNode*>::iterator it=x_lists.begin();it!=x_lists.end();it++) {
             ListNode *curN = it->second;
             cout<<it->first<<": ";
             while(curN){
@@ -119,7 +140,7 @@ struct NodePool{
         }
         // print y_list
         cout<<"y_list:"<<endl;
-        for(unordered_map<int,ListNode*>::iterator it=y_lists.begin();it!=y_lists.end();it++) {
+        for(map<int,ListNode*>::iterator it=y_lists.begin();it!=y_lists.end();it++) {
             ListNode *curN = it->second;
             cout<<it->first<<": ";
             while(curN){

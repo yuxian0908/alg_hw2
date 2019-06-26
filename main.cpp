@@ -45,21 +45,24 @@ vector<string> split(const string &s, const string &seperator){
 
 
 int main(){
-
+        
     // first polygon
     
     Node *n1, *n2, *n3, *n4;
-    n1 = new Node(0,0);
-    n2 = new Node(0,0);
-    n3 = new Node(0,0);
-    n4 = new Node(0,0);
 
+            	Spolygon *master_polygon;
+    /*
+    n1 = new Node(1036000,1000);
+    n2 = new Node(4193980,1000);
+    n3 = new Node(4193980,1700);
+    n4 = new Node(1036000,1700);
     n1->replaceNext(n2);
     n2->replaceNext(n3);
     n3->replaceNext(n4);
     n4->replaceNext(n1);
-    Spolygon *master_polygon = new Spolygon(n1);
+    Spolygon *master_polygon = new Spolygon(n1);*/
     
+    bool master_exist = false;
     
     fstream myfile;
     string line;
@@ -71,21 +74,29 @@ int main(){
   	for(vector<string>::size_type i = 0; i != s.size(); ++i)
     cout << s[i] << "\n";
     cout << endl;
-    
-    for(int i = 1 ;i < s.size() - 1; i++){
+    cout << s.size() <<"\n"; 
+    cout << s[s.size()-2];
+    for(int i = 1 ;i < s.size() - 2; i++){
     	getline(myfile, line);
     	getline(myfile, line);
         vector<string> operation =split(line, " "); // operation[1] is the operation
         cout<< "\n"<< operation[1]<<"\n"; //��߬O�f�ɰw�Aclip�n�e���ɰw 
-        if(operation[1] == "MERGE"){
-        	while (getline (myfile,line) && line!="END DATA"){
-    		
+        	while (getline (myfile,line) && line!="END DATA" ){
     		vector<string> temp = split(line, " ");
+    		for(vector<string>::size_type j = 0; j != temp.size()-1; ++j)
+    			cout << temp[j]  << " ";
+    		cout<<endl;
     		int points[9];
-    		int x_min=0, x_max=0;
-    		int y_min=0, y_max=0;
-    		for (int k = 0; k < 9; k++){
-    			points[k]=stoi(temp[k]);
+    		int x_min, x_max;
+    		int y_min, y_max;
+    		for (int k = 1; k < 9; k++){
+    			points[k]=stoi(temp[k],nullptr,10);
+			}
+			x_min=points[1];
+			x_max=points[1];
+    		y_min=points[2];
+			y_max=points[2];
+			for (int k = 1; k < 9; k++){
     			if(k%2==1){
     				x_max = (points[k]>x_max)?points[k]:x_max;
     				x_min = (points[k]<x_min)?points[k]:x_min;		    
@@ -94,6 +105,7 @@ int main(){
     				y_min = (points[k]<y_min)?points[k]:y_min;
 				}
 			}
+			//cout<<"\n NOTICE : "<<x_max<<"@"<<x_min<<"@"<<y_max<<"@"<<y_max<<"@"<<"\n";
 			
 			n1 = new Node(x_min, y_min);
 			n2 = new Node(x_max, y_min);
@@ -103,53 +115,42 @@ int main(){
             n2->replaceNext(n3);
             n3->replaceNext(n4);
             n4->replaceNext(n1);
+            
             Spolygon *s1 = new Spolygon(n1);
-            s1->firstNode->printNodes();
+            //s1->printPolygon();
             //cout << temp[j] << "+";
             //cout << "\n";
-           
-			master_polygon->merge(s1);
-			cout<<endl<<"merge"<<endl;
-			master_polygon->firstNode->printNodes();
+        if(operation[1] == "MERGE"){
+           	if(!master_exist){
+              master_polygon = new Spolygon(n1);
+           		master_exist = true;
+			   }
+           	master_polygon->merge(s1);
+			//cout<<endl<<"merge"<<endl;
+			//master_polygon->printPolygon();
+		   } 
+		   else if(operation[1]=="CLIPPER"){
+		   	    master_polygon->clip(s1);
+                //cout<<endl<<"clip"<<endl;
+                //master_polygon->printPolygon();
+		   } 
+		   else if(operation[1] == "MERGE"){
+		   	    master_polygon->merge(s1);
+           		//cout<<endl<<"merge"<<endl;
+			    //master_polygon->printPolygon();
+		   } 
+		
 			}
 		}
-		else if(operation[1]=="CLIPPER"){
-            while (getline (myfile,line) && line!="END DATA"){
-                
-                vector<string> temp = split(line, " ");
-                int points[9];
-                int x_min=0, x_max=0;
-                int y_min=0, y_max=0;
-                for (int k = 0; k < 9; k++){
-                    points[k]=stoi(temp[k]);
-                    if(k%2==1){
-                        x_max = (points[k]>x_max)?points[k]:x_max;
-                        x_min = (points[k]<x_min)?points[k]:x_min;		    
-                    }else{
-                        y_max = (points[k]>y_max)?points[k]:y_max;
-                        y_min = (points[k]<y_min)?points[k]:y_min;
-                    }
-                }
-                n1 = new Node(x_min, y_min); //���U 
-                n2 = new Node(x_min, y_max); //���W 
-                n3 = new Node(x_max, y_max); //�k�W 
-                n4 = new Node(x_max, y_min); //�k�U 
-                n1->replaceNext(n2);
-                n2->replaceNext(n3);
-                n3->replaceNext(n4);
-                n4->replaceNext(n1);
-                Epolygon *s1 = new Epolygon(n1);
-                s1->firstNode->printNodes();
-                //cout << temp[j] << "+";
-                //cout << "\n";
-                master_polygon->clip(s1);
-                cout<<endl<<"clip"<<endl;
-                master_polygon->firstNode->printNodes();
-            }
-        }
-	}
-    myfile.close();
-  
-
+		
+		//master_polygon->storeInPool();
+		if(s[s.size()-2] == "SH"){	
+		    cout << "SH";
+		    Split_H(master_polygon);
+		}else if(s[s.size()-2] == "SV"){
+			cout << "SV";
+			Split_V(master_polygon);
+		}
+		myfile.close();
     return 0;
-}
+	}

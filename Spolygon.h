@@ -18,6 +18,9 @@ class Spolygon
         void clip(Spolygon *s);
         void printPolygon();
         void storeInPool();
+        void resetNodePool();
+        void printNodePool();
+        void updateNodePool();
         vector<PolygonWithHole> poly;
         vector<NodePool> nodePool;
 };

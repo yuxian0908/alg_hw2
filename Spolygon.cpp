@@ -20,15 +20,18 @@ using namespace std;
         }
         p.set(vpts.begin(),vpts.end());
 
-        poly.push_back(p);    
+        poly.push_back(p); 
+        updateNodePool();   
     }
 
     void Spolygon::merge(Spolygon* s){
         assign(poly,poly+s->poly);
+        updateNodePool();  
     }
 
     void Spolygon::clip(Spolygon* s){
         assign(poly,poly-s->poly);
+        updateNodePool();  
     }
 
     void Spolygon::printPolygon(){
@@ -71,5 +74,25 @@ using namespace std;
             }
             nodePool.push_back(s);
         }
+    }
+
+    void Spolygon::printNodePool(){
+
+        cout<<endl<<"NodePool for this graph"<<endl;
+        for(vector<NodePool>::iterator it=this->nodePool.begin(); it!=this->nodePool.end(); ++it){
+            it->printPool();
+        }
+    }
+
+    void Spolygon::resetNodePool(){
+        for(vector<NodePool>::iterator it=this->nodePool.begin(); it!=this->nodePool.end(); ++it){
+            it->reset();
+        }
+        this->nodePool.clear();
+    }
+
+    void Spolygon::updateNodePool(){
+        resetNodePool();
+        storeInPool();
     }
 #endif
