@@ -73,6 +73,7 @@ void Split_H(Spolygon *s1){
 
 
 void Split_V(Spolygon *s1){
+	s1->updateNodePool();
 	out:
 	while(!s1->nodePool.empty()){
 	    auto it_s=s1->nodePool.front();
