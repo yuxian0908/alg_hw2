@@ -19,7 +19,7 @@ class Spolygon
         void printPolygon();
         void storeInPool();
         vector<PolygonWithHole> poly;
-        NodePool nodePool;
+        vector<NodePool> nodePool;
 };
 
 #endif

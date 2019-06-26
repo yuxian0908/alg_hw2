@@ -150,8 +150,11 @@ int main(){
     s1->printPolygon();
 
     s1->storeInPool();
-    s1->nodePool.printPool();
 
+
+    for(vector<NodePool>::iterator it=s1->nodePool.begin(); it!=s1->nodePool.end(); ++it){
+        it->printPool();
+    }
 
 
     cout<<endl<<"hello world"<<endl;

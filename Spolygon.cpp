@@ -56,24 +56,20 @@ using namespace std;
     void Spolygon::storeInPool(){
         for(vector<PolygonWithHole>::iterator it=poly.begin(); it!=poly.end(); ++it)
         {
-            cout<<"Polygon45 with hole :"<<endl;
-            cout<<"outline: "<<endl;
+            NodePool s;
             for(polygon_45_with_holes_data<int>::iterator_type it_pt1=it->begin(); it_pt1!=it->end(); ++it_pt1)
             {
-                cout<<it_pt1->x()<<","<<it_pt1->y()<<endl;
-                nodePool.add(it_pt1->x(), it_pt1->y());
+                s.add(it_pt1->x(), it_pt1->y());
             }
 
             for(polygon_45_with_holes_data<int>::iterator_holes_type it_hole=it->begin_holes(); it_hole!=it->end_holes(); ++it_hole)
             {
-                cout<<"hole:"<<endl;
                 for(polygon_45_data<int>::iterator_type it_pt=it_hole->begin(); it_pt!=it_hole->end(); ++it_pt)
                 {
-                    cout<<it_pt->x()<<","<<it_pt->y()<<endl;
-                    nodePool.add(it_pt->x(), it_pt->y());
+                    s.add(it_pt->x(), it_pt->y());
                 }
-
             }
+            nodePool.push_back(s);
         }
     }
 #endif
