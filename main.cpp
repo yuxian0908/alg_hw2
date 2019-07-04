@@ -7,75 +7,58 @@
 #include "Split.h"
 using namespace std;
 vector<string> split(const string &s, const string &seperator){
-  vector<string> result;
-  typedef string::size_type string_size;
-  string_size i = 0;
+	vector<string> result;
+	typedef string::size_type string_size;
+	string_size i = 0;
   
-  while(i != s.size()){
-    //���r�Ŧꤤ���Ӥ����_���j�Ū��r���F
-    int flag = 0;
-    while(i != s.size() && flag == 0){
-      flag = 1;
-      for(string_size x = 0; x < seperator.size(); ++x)
-        if(s[i] == seperator[x]){
-          ++i;
-          flag = 0;
-          break;
-        }
-    }
-    //���S�@�Ӥ��j�šA�N��Ӥ��j�Ť��Ӫ��r�Ŧ���X�F
-    flag = 0;
-    string_size j = i;
-    while(j != s.size() && flag == 0){
-      for(string_size x = 0; x < seperator.size(); ++x)
-        if(s[j] == seperator[x]){
-          flag = 1;
-          break;
-        }
-      if(flag == 0) 
-        ++j;
-    }
-    if(i != j){
-      result.push_back(s.substr(i, j-i));
-      i = j;
-    }
-  }
-  return result;
+	while(i != s.size()){
+		int flag = 0;
+		while(i != s.size() && flag == 0){
+			flag = 1;
+			for(string_size x = 0; x < seperator.size(); ++x)
+				if(s[i] == seperator[x]){
+					++i;
+					flag = 0;
+					break;
+				}
+		}
+		flag = 0;
+		string_size j = i;
+		while(j != s.size() && flag == 0){
+			for(string_size x = 0; x < seperator.size(); ++x)
+				if(s[j] == seperator[x]){
+					flag = 1;
+					break;
+				}
+			if(flag == 0) ++j;
+		}
+		if(i != j){
+			result.push_back(s.substr(i, j-i));
+			i = j;
+		}
+	}
+	return result;
 }
 
 
-int main(){
-        
-    // first polygon
-    
-    Node *n1, *n2, *n3, *n4;
-    /*
-    n1 = new Node(1036000,1000);
-    n2 = new Node(4193980,1000);
-    n3 = new Node(4193980,1700);
-    n4 = new Node(1036000,1700);
-    n1->replaceNext(n2);
-    n2->replaceNext(n3);
-    n3->replaceNext(n4);
-    n4->replaceNext(n1);
-    Spolygon *master_polygon = new Spolygon(n1);*/
+int main(int argc, char* argv[]){
     
     bool master_exist = false;
     int count_for_split = 1;
     bool SH;
     bool SV;
+    bool SO;
     int SH_p = 0;
     int SV_p = 0;
     Spolygon *master_polygon;
     fstream myfile;
     string line;
-    myfile.open ("OpenCase_1.txt");
-    //myfile.open ("testdata.txt");
-    //���Ĥ@��A�ooperation��T 
+    myfile.open (argv[1]);
+    char *file_out = argv[2];
+
   	getline(myfile, line);
   	vector<string> s =split(line, " ");
   	for(vector<string>::size_type i = 0; i != s.size(); ++i){
-  		cout << s[i] << "\n";
   		if(s[i] == "SH"){
   			count_for_split++;
   			SH=true;
@@ -84,101 +67,74 @@ int main(){
 			SV=true;
 			count_for_split++;
 			SV_p = i ;
+		}else if(s[i] == "SO"){
+			SO=true;
+			count_for_split++;
 		}
-	  }
-    cout << endl;
-    cout << s.size() <<"\n"; 
-    cout << s[s.size()-count_for_split];
+	}
+	  
     for(int i = 1 ;i < s.size() - count_for_split; i++){
     	getline(myfile, line);
     	getline(myfile, line);
-        vector<string> operation =split(line, " "); // operation[1] is the operation
-        cout<< "\n"<< operation[1]<<"\n"; //��߬O�f�ɰw�Aclip�n�e���ɰw 
-        	while (getline (myfile,line) && line!="END DATA" ){
+        vector<string> operation =split(line, " ");
+		while (getline (myfile,line) && line!="END DATA" ){
     		vector<string> temp = split(line, " ");
-    		//for(vector<string>::size_type j = 0; j != temp.size()-1; ++j)
-    		//	cout << temp[j]  << " ";
-    		//cout<<endl;
-    		int points[9];
-    		int x_min, x_max;
-    		int y_min, y_max;
-    		for (int k = 1; k < 9; k++){
+			int len = temp.size()-1;
+    		int points[len];
+    		for (int k = 1; k < len; k++){
     			points[k]=stoi(temp[k],nullptr,10);
 			}
-			x_min=points[1];
-			x_max=points[1];
-    		y_min=points[2];
-			y_max=points[2];
-			for (int k = 1; k < 9; k++){
-    			if(k%2==1){
-    				x_max = (points[k]>x_max)?points[k]:x_max;
-    				x_min = (points[k]<x_min)?points[k]:x_min;		    
-				}else{
-					y_max = (points[k]>y_max)?points[k]:y_max;
-    				y_min = (points[k]<y_min)?points[k]:y_min;
-				}
+
+			Node *n1 = new Node(points[1], points[2]);
+			Node *curN = n1;
+			Node *tmpN;
+			for(int k=3; k<len; k+=2){
+				tmpN = new Node(points[k], points[k+1]);
+				curN->replaceNext(tmpN);
+				curN = tmpN;
 			}
-			//cout<<"\n NOTICE : "<<x_max<<"@"<<x_min<<"@"<<y_max<<"@"<<y_max<<"@"<<"\n";
-			
-			n1 = new Node(x_min, y_min);
-			n2 = new Node(x_max, y_min);
-			n3 = new Node(x_max, y_max);
-			n4 = new Node(x_min, y_max);
-			n1->replaceNext(n2);
-            n2->replaceNext(n3);
-            n3->replaceNext(n4);
-            n4->replaceNext(n1);
-            
+			tmpN->replaceNext(n1);
+
             Spolygon *s1 = new Spolygon(n1);
-            //s1->printPolygon();
-            //cout << temp[j] << "+";
-            //cout << "\n";
-           if(operation[1] == "MERGE"){
-           	if(!master_exist){
-           		master_polygon = new Spolygon(n1);
-           		master_exist = true;
-			   }
-           	master_polygon->merge(s1);
-			//cout<<endl<<"merge"<<endl;
-			//master_polygon->printPolygon();
-		   } 
-		   else if(operation[1]=="CLIPPER"){
-		   	    master_polygon->clip(s1);
-                //cout<<endl<<"clip"<<endl;
-                //master_polygon->printPolygon();
-		   } 
-		   else if(operation[1] == "MERGE"){
-		   	    master_polygon->merge(s1);
-           		//cout<<endl<<"merge"<<endl;
-			    //master_polygon->printPolygon();
-		   } 
+           	if(operation[1] == "MERGE"){
+           		if(!master_exist){
+					master_polygon = new Spolygon(n1);
+					master_exist = true;
+				}
+				master_polygon->merge(s1);
+		   	} 
+			else if(operation[1]=="CLIPPER"){
+					master_polygon->clip(s1);
+			} 
+			else if(operation[1] == "MERGE"){
+					master_polygon->merge(s1);
+			} 
 		
-			}
 		}
+	}
 		
-		//master_polygon->storeInPool();
 		if(SH_p > SV_p){
-			if(SH){	
-		    cout << "SH";
-		    //master_polygon->printNodePool();
-		    Split_H(master_polygon);
+			if(SH){
+		    	Split_H(master_polygon, file_out);
 			}
 			if(SV){
-				cout << "SV";
-				Split_V(master_polygon);
+				Split_V(master_polygon, file_out);
+			}
+			if(SO){
+				Split_H(master_polygon, file_out);
 			}
 		}else{
 			if(SV){
-				cout << "SV";
-				Split_V(master_polygon);
+				Split_V(master_polygon, file_out);
 			}
-			if(SH){	
-		    cout << "SH";
-		    Split_H(master_polygon);
+			if(SH){
+		    	Split_H(master_polygon, file_out);
 			}
-			
+			if(SO){
+				Split_H(master_polygon, file_out);
+			}		
 		}
 		
 		myfile.close();
     return 0;
-	}
+}
